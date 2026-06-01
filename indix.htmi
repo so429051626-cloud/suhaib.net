@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <title>Suhaib Net Professional Store and System - الإصدار V17</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js">
+    </script>
+    <style>
+        :root {
+            --primary: #3b5998;
+            --primary-gradient: linear-gradient(135deg, #1e3799 0%, #0f172a 100%);
+            --success: #2ecc71;
+            --success-gradient: linear-gradient(135deg, #2ecc71, #218c53);
+            --danger: #e63946;
+            --danger-gradient: linear-gradient(135deg, #e63946, #b81d24);
+            --dark: #1e293b;
+            --muted: #64748b;
+            --bg: #f8fafc;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            --purple-gradient: linear-gradient(135deg, #a855f7, #7e22ce);
+            --orange-gradient: linear-gradient(135deg, #f97316, #ea580c);
+            --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+            --cyan-gradient: linear-gradient(135deg, #06b6d4, #0891b2);
+            --app-bg: #ffffff;
+            --gold: #d4a843;
+            --gold-light: #f0d78c;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --neon-glow: 0 0 20px rgba(30, 55, 153, 0.3);
+            --hotspot-bg: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80');
+            --store-bg: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80');
+            --auth-overlay-opacity: 0.35;
+        }
+        .dark-mode {
+            --bg: #0f172a;
+            --app-bg: #0f172a;
+            --dark: #e2e8f0;
+            --muted: #94a3b8;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+            --glass: rgba(30, 41, 59, 0.85);
+            --glass-border: rgba(71, 85, 105, 0.6);
+            --auth-overlay-opacity: 0.25;
+        }
+        .dark-mode .item,
+        .dark-mode .status-detail-card,
+        .dark-mode .tx-item,
+        .dark-mode .security-box {
+            background: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        .dark-mode .input-gp input,
+        .dark-mode .input-gp select {
+            background: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        .dark-mode .balance {
+            background: linear-gradient(135deg, #1e3799 0%, #0f172a 100%);
+        }
+        .dark-mode .store-footer,
+        .dark-mode .auth-footer {
+            color: #94a3b8;
+            border-color: #334155;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            transition: background 0.5s ease;
+        }
+        .phone {
+            width: 100%;
+            max-width: 100%;
+            height: 100vh;
+            max-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            transition: background 0.4s;
+        }
+        @media (min-width: 768px) {
+            .phone {
+                max-width: 500px;
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
+                margin: 0 auto;
+            }
+            body {
+                background: #ffffff;
+            }
+        }
+        .page {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 90px;
+            animation: scaleUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            scroll-behavior: smooth;
+        }
+        .page.active {
+            display: block;
+        }
+        .page.no-nav {
+            padding-bottom: 16px;
+        }
+        @keyframes scaleUp {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.9;
+                transform: scale(1.6);
+            }
+        }
+        @keyframes floatUp {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        .marquee-bar {
+            width: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a, #1e3799);
+            border-radius: 12px;
+            padding: 10px 0;
+            margin: 10px 0 16px;
+            position: relative;
+            border: 1px solid rgba(212, 168, 67, 0.4);
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.25);
+        }
+        .marquee-bar .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 28s linear infinite;
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 0 20px;
+        }
+        .marquee-bar .marquee-content i {
+            margin: 0 12px;
+            color: #f0d78c;
+        }
+        .auth-page-container {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 16px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-page-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 1;
+            z-index: -1;
+            pointer-events: none;
+            border-radius: 0;
+        }
+        #hotspot-pg .auth-page-container::before {
+            background-image: var(--hotspot-bg);
+            opacity: 0.9;
+        }
+        #login-pg .auth-page-container::before,
+        #reg-pg .auth-page-container::before {
+            background-image: var(--store-bg);
+            opacity: 0.7;
+        }
+        .dark-mode .auth-page-container {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+        .auth-content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, var(--auth-overlay-opacity));
+            border-radius: 24px;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: background 0.4s ease;
+        }
+        .dark-mode .auth-content-area {
+            background: rgba(30, 41, 59, var(--auth-overlay-opacity));
+            border: 1px solid rgba(71, 85, 105, 0.4);
+        }
+        .pro-logo {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .logo-badge {
+            position: relative;
+            display: inline-block;
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(145deg, #0f172a 0%, #1e3799 50%, #0f172a 100%);
+            color: #fff;
+            border-radius: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 14px;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 2.5px solid var(--gold);
+            transform: rotate(-4deg);
+            transition: 0.3s;
+            overflow: hidden;
+            animation: floatUp 3s ease-in-out infinite;
+        }
+        .logo-badge::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -30%;
+            width: 80%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            transform: rotate(25deg);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .logo-badge .inner-glow {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: var(--gold-light);
+            border-radius: 50%;
+            top: 8px;
+            right: 12px;
+            filter: blur(6px);
+            opacity: 0.7;
+            animation: pulseGlow 2s infinite;
+        }
+        .pro-logo h2 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #1e3799, #0f172a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .dark-mode .pro-logo h2 {
+            background: linear-gradient(135deg, #60a5fa, #93c5fd);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        .pro-logo .logo-sub {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            margin-top: 2px;
+        }
+        .hotspot-illustration {
+            text-align: center;
+            margin: 10px 0 16px;
+            font-size: 60px;
+            animation: floatUp 4s ease-in-out infinite;
+            filter: drop-shadow(0 8px 16px rgba(30, 55, 153, 0.25));
+        }
+        .input-gp {
+            position: relative;
+            margin-bottom: 16px;
+            text-align: right;
+            z-index: 1;
+        }
+        .input-gp label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
+            display: block;
+            padding-right: 4px;
+        }
+        .dark-mode .input-gp label {
+            color: #e2e8f0;
+        }
+        .input-gp input,
+        .input-gp select {
+            width: 100%;
+            padding: 15px 48px 15px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            outline: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(4px);
+            transition: all 0.25s ease;
+        }
+        .dark-mode .input-gp input,
+        .dark-mode .input-gp select {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        .input-gp input:focus,
+        .input-gp select:focus {
+            border-color: #4a69bd;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 0 4px rgba(74, 105, 189, 0.1);
+        }
+        .dark-mode .input-gp input:focus,
+        .dark-mode .input-gp select:focus {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: #60a5fa;
+        }
+        .input-gp i.field-icon {
+            position: absolute;
+            right: 18px;
+            bottom: 17px;
+            color: var(--muted);
+            font-size: 18px;
+            transition: 0.25s;
+        }
+        input::placeholder {
+            font-size: 12px !important;
+            opacity: 0.6 !important;
+            font-weight: 600;
+            color: var(--muted);
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-gradient);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(30, 55, 153, 0.2);
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::after {
+            left: 100%;
+        }
+        .btn:active {
+            transform: scale(0.97);
+            opacity: 0.95;
+        }
+        .btn-danger {
+            background: var(--danger-gradient);
+            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
+        }
+        .btn-success {
+            background: var(--success-gradient);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+        }
+        .btn-warning {
+            background: var(--warning-gradient);
+            color: #fff;
+        }
+        .btn-sm {
+            padding: 8px 16px;
+            background: var(--primary-gradient);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.2s;
+            width: 100%;
+        }
+        .btn-xs {
+            padding: 5px 10px;
+            font-size: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: 0.2s;
+        }
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 44px 12px 16px;
+            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            outline: none;
+            font-size: 13px;
+            font-weight: 600;
+            background: #fff;
+        }
+        .dark-mode .search-wrapper input {
+            background: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        .search-wrapper i {
+            position: absolute;
+            right: 16px;
+            top: 15px;
+            color: var(--muted);
+            font-size: 15px;
+        }
+        .nav {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            height: 72px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            display: none;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            z-index: 999;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .dark-mode .nav {
+            background: rgba(30, 41, 59, 0.92);
+            border-color: rgba(71, 85, 105, 0.6);
+        }
+        .nav.active {
+            display: flex;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            width: 20%;
+            transition: all 0.25s ease;
+        }
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        .nav-item.active {
+            color: #1e3799;
+        }
+        .dark-mode .nav-item.active {
+            color: #60a5fa;
+        }
+        .nav-item.admin-nav {
+            color: #7e22ce;
+        }
+        .nav-item.admin-nav.active {
+            color: #7e22ce;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            font-size: 22px;
+        }
+        .dark-mode .header {
+            color: #e2e8f0;
+        }
+        .header-notif {
+            position: relative;
+            cursor: pointer;
+            font-size: 22px;
+            color: #3b5998;
+            background: #f1f5f9;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dark-mode .header-notif {
+            background: #334155;
+            color: #60a5fa;
+        }
+        .header-notif .notif-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 10px;
+            height: 10px;
+            background: #e63946;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        .balance {
+            background: linear-gradient(135deg, #1e3799 0%, #111827 100%);
+            border-radius: 24px;
+            padding: 24px;
+            color: #fff;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 25px -5px rgba(30, 55, 153, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .balance::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .balance p {
+            font-size: 13px;
+            opacity: 0.75;
+            font-weight: 600;
+        }
+        .balance h2 {
+            margin: 6px 0;
+            font-size: 34px;
+            font-weight: 800;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin: 8px 0 24px;
+            text-align: center;
+        }
+        .feature-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .feature-icon-circle {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 8px;
+            box-shadow: 0 6px 12px -3px rgba(0, 0, 0, 0.04);
+            border: 1px solid #fff;
+            transition: all 0.25s;
+        }
+        .feature-btn span {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #334155;
+            white-space: nowrap;
+        }
+        .dark-mode .feature-btn span {
+            color: #cbd5e1;
+        }
+        .f-shop {
+            background-color: #ecfdf5;
+            color: #10b981;
+            border: 1px solid #d1fae5;
+        }
+        .f-cards {
+            background-color: #eff6ff;
+            color: #3b82f6;
+            border: 1px solid #dbeafe;
+        }
+        .f-send {
+            background-color: #fff7ed;
+            color: #f97316;
+            border: 1px solid #ffedd5;
+        }
+        .f-invoice {
+            background-color: #f3e8ff;
+            color: #a855f7;
+            border: 1px solid #e9d5ff;
+        }
+        .f-charge {
+            background-color: #fefce8;
+            color: #eab308;
+            border: 1px solid #fef08a;
+        }
+        .item {
+            background: #fff;
+            padding: 16px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            border: 1px solid #f1f5f9;
+            text-align: right;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+        .item:active {
+            transform: scale(0.99);
+        }
+        .item-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-left: 14px;
+            color: #fff;
+        }
+        .card-details {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+        .badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        .badge-out-of-stock {
+            background: #fef2f2;
+            color: #e63946;
+            border: 1px solid #fecaca;
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .admin-stat-card {
+            padding: 18px;
+            border-radius: 20px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .section-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--dark);
+            margin: 20px 0 12px;
+            text-align: right;
+            border-right: 4px solid var(--primary);
+            padding-right: 10px;
+        }
+        .admin-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .admin-menu-btn {
+            padding: 12px 6px;
+            border: none;
+            border-radius: 16px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .security-box {
+            background: #fffdf5;
+            border: 1px solid #fef3c7;
+            border-right: 4px solid #d97706;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        .dark-mode .security-box {
+            background: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        .tx-item {
+            background: #fff;
+            padding: 14px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #f1f5f9;
+            text-align: right;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+        .tx-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .tx-desc {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+            font-weight: 600;
+        }
+        .tx-amount {
+            font-size: 14px;
+            font-weight: 800;
+            text-align: left;
+        }
+        .tx-minus {
+            color: var(--danger);
+        }
+        .tx-plus {
+            color: var(--success);
+        }
+        .store-footer {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            padding: 20px 0;
+            border-top: 1px dashed #e2e8f0;
+            margin-top: 20px;
+            margin-bottom: 70px;
+        }
+        .auth-footer {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+            margin-top: auto;
+            position: relative;
+            z-index: 1;
+        }
+        .hotspot-fixed-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            padding: 10px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hotspot-fixed-actions .hs-btn {
+            flex: 1 1 auto;
+            min-width: 85px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 12px 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 11.5px;
+            text-align: center;
+            color: #1e3799;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            backdrop-filter: blur(4px);
+        }
+        .hotspot-fixed-actions .hs-btn:active {
+            background: #eff6ff;
+            border-color: #3b5998;
+            transform: scale(0.97);
+        }
+        .status-hero {
+            background: linear-gradient(160deg, #0f172a 0%, #1e3799 40%, #0f172a 100%);
+            border-radius: 28px;
+            padding: 30px 22px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.5);
+        }
+        .status-badge-active {
+            display: inline-block;
+            background: #2ecc71;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .status-badge-expired {
+            display: inline-block;
+            background: #e63946;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .status-detail-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 14px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .status-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #f1f5f9;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .pdf-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 8mm;
+            background: white;
+            margin: 15px auto;
+            display: grid;
+            gap: 3mm;
+            align-content: start;
+            box-sizing: border-box;
+            page-break-after: always;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border: 1px solid #cbd5e1;
+        }
+        .printable-card {
+            break-inside: avoid;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .security-bg {
+            background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%);
+            background-size: 8px 8px;
+        }
+        .admin-master-panel {
+            background: #fff;
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 20px;
+            border: 2px solid #7e22ce;
+            box-shadow: 0 8px 24px rgba(126, 34, 206, 0.1);
+        }
+        .dark-mode .admin-master-panel {
+            background: #1e293b;
+            border-color: #a855f7;
+        }
+        .master-panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .master-btn {
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 11px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .master-btn:active {
+            transform: scale(0.95);
+        }
+        .clipboard-icon {
+            cursor: pointer;
+            color: #3b5998;
+            font-size: 1.2em;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .profile-actions {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+        .profile-action-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            flex: 1;
+            margin: 0 5px;
+        }
+        .bg-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: #8b5cf6;
+            color: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            border: none;
+            margin: 6px 0;
+            transition: 0.2s;
+        }
+        .bg-upload-btn:active {
+            transform: scale(0.96);
+        }
+        .bg-preview-mini {
+            width: 100%;
+            max-height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 6px 0;
+            border: 2px solid #e2e8f0;
+            display: none;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: transparent;
+                padding: 0;
+                margin: 0;
+            }
+            .pdf-page {
+                box-shadow: none;
+                margin: 0;
+                border: none;
+                page-break-after: always;
+            }
+            .phone {
+                border: none;
+                box-shadow: none;
+                height: auto;
+                overflow: visible;
+                display: block;
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .page {
+                overflow: visible;
+                padding: 0;
+            }
+        }
+        @media (max-width: 420px) {
+            .features-grid {
+                gap: 4px;
+            }
+            .feature-icon-circle {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+            }
+            .feature-btn span {
+                font-size: 9px;
+            }
+            .pdf-page {
+                padding: 4mm;
+                gap: 2mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <!-- صفحة الهوت سبوت -->
+        <div id="hotspot-pg" class="page active no-nav" style="padding:0;">
+            <div class="auth-page-container" style="padding:10px 12px;">
+                <div class="auth-content-area">
+                    <div class="pro-logo" style="margin-bottom:8px;">
+                        <div class="logo-badge"><span style="position:relative;z-index:1;">📶</span><div class="inner-glow"></div></div>
+                        <h2>Sohaib Net</h2>
+                        <div class="logo-sub">شبكة Sohaib Net لخدمات الإنترنت</div>
+                    </div>
+                    <div class="hotspot-illustration">🌐📡💻</div>
+                    <div class="marquee-bar">
+                        <div class="marquee-content">
+                            ⚡ سرعات فائقة تصل لـ 5 ميجا &nbsp;<i class="fa-solid fa-wifi"></i>&nbsp;
+                            🎯 باقات متنوعة تناسب الجميع &nbsp;<i class="fa-solid fa-tags"></i>&nbsp;
+                            💰 أسعار منافسة تبدأ من 2 شيكل &nbsp;<i class="fa-solid fa-coins"></i>&nbsp;
+                            📞 دعم فني 24/7 على واتساب +970599038268 &nbsp;<i class="fa-brands fa-whatsapp"></i>&nbsp;
+                            🛡️ اتصال آمن ومستقر &nbsp;<i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                    </div>
+                    <div class="input-gp"><input type="text" id="wifi-user" placeholder="اسم المستخدم"><i class="fa-solid fa-user field-icon"></i></div>
+                    <div class="input-gp"><input type="password" id="wifi-pass" placeholder="كلمة المرور"><i class="fa-solid fa-lock field-icon"></i></div>
+                    <button class="btn btn-success" onclick="connectWifi()"><i class="fa-solid fa-globe"></i> اتصال بالإنترنت</button>
+                    <div style="text-align:center;margin-top:10px;">
+                        <span style="color:#3b5998;font-weight:800;font-size:14px;cursor:pointer;display:inline-block;padding:10px 20px;background:rgba(248,250,252,0.7);border:1.5px solid #e2e8f0;border-radius:14px;transition:0.2s;backdrop-filter:blur(4px);" onclick="goToStoreWithDelay()">
+                            <i class="fa-solid fa-store"></i> الدخول لمتجر الرصيد
+                        </span>
+                    </div>
+                    <div class="hotspot-fixed-actions">
+                        <button class="hs-btn" onclick="openPointsOfSale()"><i class="fa-solid fa-location-dot"></i> نقاط البيع</button>
+                        <button class="hs-btn" onclick="openPricesQuickView()"><i class="fa-solid fa-tags"></i> الأسعار</button>
+                        <button class="hs-btn" onclick="openWhatsApp('+970599038268')"><i class="fa-brands fa-whatsapp"></i> واتساب</button>
+                    </div>
+                    <div style="text-align:center;margin-top:6px;">
+                        <span style="color:var(--muted);font-weight:700;font-size:11px;cursor:pointer;" onclick="openWhatsApp('+970599038268')">
+                            <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> الدعم الفني: +970599038268
+                        </span>
+                    </div>
+                </div>
+                <div class="auth-footer">جميع الحقوق محفوظة لدى Sohaib Net</div>
+            </div>
+        </div>
+
+        <!-- صفحة الحالة -->
+        <div id="status-pg" class="page no-nav" style="padding:0;">
+            <div class="auth-page-container" style="padding:10px 12px;">
+                <div class="auth-content-area">
+                    <div class="pro-logo" style="margin-bottom:12px;">
+                        <div class="logo-badge" style="width:70px;height:70px;font-size:28px;"><span style="position:relative;z-index:1;">📶</span><div class="inner-glow"></div></div>
+                        <h2 style="font-size:22px;">Sohaib Net</h2>
+                        <div class="logo-sub">حالة الاتصال وتفاصيل المستهلك</div>
+                    </div>
+                    <div class="status-hero" id="status-hero-content">
+                        <div class="status-icon-big" id="status-main-icon" style="font-size:38px;">✅</div>
+                        <h2 id="status-pkg-title">--</h2>
+                        <span class="status-badge-active" id="status-badge-el">🟢 متصل ونشط</span>
+                    </div>
+                    <div class="status-detail-card">
+                        <div class="status-detail-row"><span>👤 اسم المستخدم</span><span id="status-user">--</span></div>
+                        <div class="status-detail-row"><span>📦 الباقة</span><span id="status-pkg">--</span></div>
+                        <div class="status-detail-row"><span>💰 السعر</span><span id="status-price">--</span></div>
+                        <div class="status-detail-row"><span>⏱️ الصلاحية</span><span id="status-valid">--</span></div>
+                        <div class="status-detail-row"><span>📅 تاريخ التفعيل</span><span id="status-start">--</span></div>
+                        <div class="status-detail-row"><span>⏳ تاريخ الانتهاء</span><span id="status-expiry">--</span></div>
+                        <div class="status-detail-row"><span>🔢 الرقم التسلسلي</span><span id="status-serial">--</span></div>
+                    </div>
+                    <div id="status-expired-actions" style="display:none;text-align:center;margin-top:10px;">
+                        <p style="color:#e63946;font-weight:700;margin-bottom:10px;">⚠️ انتهت صلاحية هذه البطاقة</p>
+                        <button class="btn btn-success" onclick="goToStoreFromStatus()"><i class="fa-solid fa-store"></i> شراء بطاقة جديدة</button>
+                    </div>
+                    <button class="btn" onclick="showAuth('hotspot-pg')"><i class="fa-solid fa-arrow-right"></i> العودة لبوابة الإنترنت</button>
+                    <button class="btn btn-success" id="status-goto-store-btn" onclick="goToStoreFromStatus()"><i class="fa-solid fa-store"></i> الذهاب للمتجر</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- صفحة تسجيل دخول المتجر -->
+        <div id="login-pg" class="page no-nav" style="padding:0;">
+            <div class="auth-page-container">
+                <div class="auth-content-area">
+                    <div class="pro-logo"><div class="logo-badge"><span style="position:relative;z-index:1;">🛒</span><div class="inner-glow"></div></div><h2>Sohaib Net</h2><div class="logo-sub">متجر البطاقات الذكي</div></div>
+                    <div class="marquee-bar">
+                        <div class="marquee-content">
+                            🎉 أهلاً بك في متجر صهيب نت &nbsp;<i class="fa-solid fa-cart-shopping"></i>&nbsp;
+                            💳 بطاقات إنترنت بأسعار مميزة &nbsp;<i class="fa-solid fa-ticket"></i>&nbsp;
+                            🔒 دفع آمن وسريع &nbsp;<i class="fa-solid fa-lock"></i>&nbsp;
+                            🚀 تفعيل فوري للبطاقات &nbsp;<i class="fa-solid fa-bolt"></i>
+                        </div>
+                    </div>
+                    <div class="input-gp"><input type="text" id="l-user" placeholder="اسم المستخدم"><i class="fa-solid fa-at field-icon"></i></div>
+                    <div class="input-gp"><input type="password" id="l-pass" placeholder="كلمة المرور"><i class="fa-solid fa-key field-icon"></i></div>
+                    <button class="btn" onclick="loginStore()"><i class="fa-solid fa-right-to-bracket"></i> دخول للمتجر</button>
+                    <p style="font-size:13px;margin-top:20px;text-align:center;">حساب جديد؟ <span style="color:#3b5998;cursor:pointer;font-weight:700;" onclick="showAuth('reg-pg')">إنشاء حساب</span></p>
+                    <p style="font-size:12px;margin-top:8px;text-align:center;color:var(--muted);cursor:pointer;" onclick="forgotPassword()"><i class="fa-solid fa-question-circle"></i> نسيت كلمة المرور؟</p>
+                    <div style="text-align:center;margin-top:16px;"><span style="color:var(--muted);font-weight:700;font-size:13px;cursor:pointer;display:inline-block;padding:8px 16px;background:rgba(248,250,252,0.7);border-radius:12px;backdrop-filter:blur(4px);" onclick="showAuth('hotspot-pg')"><i class="fa-solid fa-arrow-right"></i> بوابة الإنترنت</span></div>
+                </div>
+                <div class="auth-footer">جميع الحقوق محفوظة لدى Sohaib Net</div>
+            </div>
+        </div>
+
+        <!-- صفحة التسجيل -->
+        <div id="reg-pg" class="page no-nav" style="padding:0;">
+            <div class="auth-page-container" style="padding:15px 16px;">
+                <div class="auth-content-area">
+                    <div class="pro-logo" style="margin-bottom:16px;"><div class="logo-badge" style="background:linear-gradient(145deg,#0f172a,#218c53,#0f172a);width:75px;height:75px;font-size:30px;"><span style="position:relative;z-index:1;">➕</span><div class="inner-glow"></div></div><h2>حساب جديد</h2></div>
+                    <div class="input-gp"><input type="text" id="r-name" placeholder="الاسم الكامل"><i class="fa-solid fa-id-card field-icon"></i></div>
+                    <div class="input-gp"><input type="text" id="r-user" placeholder="اسم المستخدم"><i class="fa-solid fa-at field-icon"></i></div>
+                    <div class="input-gp"><input type="tel" id="r-phone" placeholder="رقم الهاتف"><i class="fa-solid fa-phone field-icon"></i></div>
+                    <div class="input-gp"><input type="password" id="r-pass" placeholder="كلمة المرور"><i class="fa-solid fa-lock field-icon"></i></div>
+                    <div class="input-gp"><input type="password" id="r-pass-confirm" placeholder="تأكيد كلمة المرور"><i class="fa-solid fa-shield field-icon"></i></div>
+                    <button class="btn btn-success" onclick="registerStore()">تأكيد وإنشاء الحساب</button>
+                    <p style="font-size:13px;margin-top:15px;text-align:center;">لديك حساب بالفعل؟ <span style="color:#3b5998;cursor:pointer;font-weight:700;" onclick="showAuth('login-pg')">تسجيل دخول</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الصفحة الرئيسية (المتجر) -->
+        <div id="home-pg" class="page">
+            <div class="header"><span>🏠 المتجر والرصيد</span><div class="header-notif" onclick="openNotificationsModal()"><i class="fa-solid fa-bell"></i><span class="notif-dot" id="notif-dot" style="display:none;"></span></div></div>
+            <div id="user-exclusive-view" style="display:none;">
+                <div class="balance"><p>💰 الرصيد المتاح</p><h2 id="u-balance-txt">0.00 ₪</h2><div style="font-size:12px;opacity:0.9;" id="user-display">-</div></div>
+                <div class="features-grid">
+                    <button class="feature-btn" onclick="toggleDashboardView('shop')"><div class="feature-icon-circle f-shop"><i class="fa-solid fa-cart-shopping"></i></div><span>شراء كروت</span></button>
+                    <button class="feature-btn" onclick="goNav('mycards-pg')"><div class="feature-icon-circle f-cards"><i class="fa-solid fa-ticket"></i></div><span>بطاقاتي</span></button>
+                    <button class="feature-btn" onclick="openSendBalanceModal()"><div class="feature-icon-circle f-send"><i class="fa-solid fa-paper-plane"></i></div><span>إرسال رصيد</span></button>
+                    <button class="feature-btn" onclick="toggleDashboardView('invoice')"><div class="feature-icon-circle f-invoice"><i class="fa-solid fa-file-invoice-dollar"></i></div><span>كشف حساب</span></button>
+                    <button class="feature-btn" onclick="openChargeBalanceModal()"><div class="feature-icon-circle f-charge"><i class="fa-solid fa-coins"></i></div><span>شحن رصيد</span></button>
+                </div>
+            </div>
+            <div id="dashboard-dynamic-content"></div>
+            <div class="store-footer">النظام متخصص لبيع بطاقات Sohaib Net<br>م.صهيب قديح</div>
+        </div>
+
+        <!-- صفحة بطاقاتي -->
+        <div id="mycards-pg" class="page">
+            <div class="header">🎫 بطاقاتي المشتراة</div>
+            <div class="search-wrapper"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="search-my-cards" oninput="filterMyCards()" placeholder="ابحث في كروتك..."></div>
+            <div id="my-cards-list"></div>
+            <div class="store-footer">النظام متخصص لبيع بطاقات Sohaib Net<br>م.صهيب قديح</div>
+        </div>
+
+        <!-- صفحة الملف الشخصي -->
+        <div id="profile-pg" class="page">
+            <div class="header">⚙️ إعدادات الحساب</div>
+            <div style="background:#fff;border-radius:20px;padding:18px;margin-bottom:16px;border:1px solid #f1f5f9;box-shadow:0 4px 12px rgba(0,0,0,0.03);">
+                <p style="color:var(--muted);font-size:12px;">الاسم الشخصي</p><h4 id="p-name" style="font-weight:800;">-</h4>
+                <p style="color:var(--muted);font-size:12px;">اسم المستخدم</p><h4 id="p-user" style="font-weight:800;">-</h4>
+                <p style="color:var(--muted);font-size:12px;">رقم الهاتف</p><h4 id="p-phone" style="font-weight:800;">-</h4>
+                <div class="profile-actions">
+                    <div class="profile-action-btn" onclick="copySiteLink()" title="نسخ رابط الموقع"><i class="fa-solid fa-link"></i><span style="font-size:10px;">نسخ الرابط</span></div>
+                    <div class="profile-action-btn" onclick="openChargeBalanceModal()" title="شحن رصيد"><i class="fa-solid fa-wallet"></i><span style="font-size:10px;">شحن رصيد</span></div>
+                </div>
+            </div>
+            <div style="background:#fff;border-radius:20px;padding:18px;border:1px solid #f1f5f9;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,0.03);">
+                <h4 style="color:#3b5998;margin-bottom:14px;"><i class="fa-solid fa-key"></i> تغيير كلمة المرور</h4>
+                <div class="input-gp"><input type="password" id="p-old-pass" placeholder="كلمة المرور الحالية"></div>
+                <div class="input-gp"><input type="password" id="p-new-pass" placeholder="كلمة المرور الجديدة"></div>
+                <button class="btn" onclick="updateUserPassword()">تحديث كلمة المرور</button>
+            </div>
+            <div style="background:#fff;border-radius:20px;padding:18px;border:1px solid #f1f5f9;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,0.03);">
+                <h4 style="color:#3b5998;margin-bottom:14px;"><i class="fa-solid fa-moon"></i> المظهر</h4>
+                <button class="btn btn-warning" onclick="toggleDarkMode()"><i class="fa-solid fa-circle-half-stroke"></i> تبديل الوضع الليلي</button>
+            </div>
+            <button class="btn btn-danger" onclick="logoutStore()"><i class="fa-solid fa-power-off"></i> تسجيل الخروج</button>
+            <div class="store-footer">النظام متخصص لبيع بطاقات Sohaib Net<br>م.صهيب قديح</div>
+        </div>
+
+        <!-- لوحة الإدارة -->
+        <div id="admin-pg" class="page">
+            <div class="header" style="color:#7e22ce;">🛡️ لوحة الإدارة والمتابعة</div>
+            <div class="grid">
+                <div class="admin-stat-card" style="background:var(--primary-gradient);"><i class="fa-solid fa-users"></i><h3 id="stat-users">0</h3><p style="font-size:11px;">المشتركين</p></div>
+                <div class="admin-stat-card" style="background:var(--orange-gradient);"><i class="fa-solid fa-boxes-stacked"></i><h3 id="stat-cards">0</h3><p style="font-size:11px;">المخزن</p></div>
+                <div class="admin-stat-card" style="background:var(--success-gradient);grid-column:span 2;"><i class="fa-solid fa-money-bill-wave"></i><h3 id="stat-total-money">0 ₪</h3><p style="font-size:11px;">إجمالي السيولة</p></div>
+            </div>
+            <div class="admin-menu-grid">
+                <button class="admin-menu-btn" style="background:var(--primary-gradient);" onclick="switchAdminView('store-log')"><i class="fa-solid fa-store"></i><span>سجل المتجر</span></button>
+                <button class="admin-menu-btn" style="background:var(--success-gradient);" onclick="switchAdminView('users')"><i class="fa-solid fa-user-gear"></i><span>المستخدمين</span></button>
+                <button class="admin-menu-btn" style="background:var(--cyan-gradient);" onclick="switchAdminView('packages-manage')"><i class="fa-solid fa-layer-group"></i><span>الباقات</span></button>
+                <button class="admin-menu-btn" style="background:var(--purple-gradient);" onclick="switchAdminView('guess')"><i class="fa-solid fa-print"></i><span>توليد كروت</span></button>
+                <button class="admin-menu-btn" style="background:#6366f1;" onclick="switchAdminView('custom-card')"><i class="fa-solid fa-id-card"></i><span>بطاقة مخصصة</span></button>
+                <button class="admin-menu-btn" style="background:var(--warning-gradient);" onclick="switchAdminView('global-settings')"><i class="fa-solid fa-sliders"></i><span>الإعدادات</span></button>
+                <button class="admin-menu-btn" style="background:#0891b2;" onclick="switchAdminView('audit-log')"><i class="fa-solid fa-clipboard-list"></i><span>سجل التدقيق</span></button>
+                <button class="admin-menu-btn" style="background:#db2777;" onclick="exportFullData()"><i class="fa-solid fa-file-export"></i><span>تصدير كامل</span></button>
+                <button class="admin-menu-btn" style="background:#059669;" onclick="importFullDataPrompt()"><i class="fa-solid fa-file-import"></i><span>استيراد</span></button>
+            </div>
+            <div id="admin-sec-main-content">
+                <div id="admin-sec-store-log" style="display:none;"><div class="section-title">📋 سجل العمليات العام</div><div id="admin-global-log-container" class="space-y-2"></div></div>
+                <div id="admin-sec-users" style="display:none;"><div class="section-title">📦 حالة كروت المخزن</div><div id="admin-available-stock-summary"></div><div class="section-title">👥 المشتركين</div><div class="search-wrapper"><i class="fa-solid fa-user-gear"></i><input type="text" id="search-users-input" oninput="filterAdminUsers()" placeholder="ابحث عن مشترك..."></div><div id="admin-users-list" class="space-y-3"></div></div>
+                <div id="admin-sec-packages-manage" style="display:none;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div class="section-title" style="margin:0;">📦 التحكم بالباقات</div><button class="btn btn-xs bg-indigo-600" onclick="openAddPackageModal()"><i class="fa-solid fa-plus"></i> إضافة</button></div><div id="admin-packages-manage-list" class="space-y-3"></div></div>
+                <div id="admin-sec-global-settings" style="display:none;"><div class="section-title">🌐 التحكم الشامل</div><div id="global-settings-container" class="space-y-3"></div></div>
+                <div id="admin-sec-custom-card" style="display:none;">
+                    <div class="section-title">🃏 إنشاء بطاقة مخصصة (برقم ومدة محددة)</div>
+                    <div class="security-box">
+                        <p style="font-size:13px;color:#78350f;margin-bottom:12px;">أدخل اسم المستخدم وكلمة المرور والمدة الزمنية التي تريدها. ستُضاف البطاقة للمخزن ويمكن استخدامها فوراً.</p>
+                        <div class="input-gp"><label>👤 اسم المستخدم (اليوزر) *</label><input type="text" id="custom-card-user" placeholder="أي قيمة تريدها" style="font-size:14px;"></div>
+                        <div class="input-gp"><label>🔑 كلمة المرور *</label><input type="text" id="custom-card-pass" placeholder="كلمة المرور" style="font-size:14px;"></div>
+                        <div class="grid">
+                            <div class="input-gp"><label>⏱️ عدد الساعات</label><input type="number" id="custom-card-hours" value="0" min="0" style="font-size:14px;"></div>
+                            <div class="input-gp"><label>⏱️ عدد الدقائق</label><input type="number" id="custom-card-minutes" value="5" min="0" style="font-size:14px;"></div>
+                        </div>
+                        <div class="input-gp"><label>🔢 الرقم التسلسلي (اختياري)</label><input type="text" id="custom-card-serial" placeholder="سيتم توليده تلقائياً إذا ترك فارغاً" style="font-size:14px;"></div>
+                        <button class="btn btn-success" onclick="createCustomCard()"><i class="fa-solid fa-plus-circle"></i> إضافة البطاقة للمخزن</button>
+                    </div>
+                    <div class="section-title">📋 آخر 10 بطاقات مخصصة تم إنشاؤها</div>
+                    <div id="custom-cards-recent-list" class="space-y-2"></div>
+                </div>
+                <div id="admin-sec-guess" style="display:none;text-align:right;">
+                    <div style="background:#0f172a;color:#f8fafc;border-radius:20px;padding:16px;margin-top:16px;">
+                        <header style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="background:#4f46e5;padding:10px;border-radius:12px;">📶</div><h2 style="font-size:18px;font-weight:800;">مطبعة صهيب net</h2></header>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;"><span>الإجمالي: <b id="statMoney" style="color:#fbbf24;">0 شيكل</b></span><span>العدد: <b id="statCount" style="color:#818cf8;">0</b></span></div>
+                        <div class="grid">
+                            <div class="input-gp"><label style="color:#cbd5e1;">اسم الشبكة</label><input type="text" id="netName" value="صهيب نت" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                            <div class="input-gp"><label style="color:#cbd5e1;">الأيقونة</label><input type="text" id="netIcon" value="📶" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                            <div class="input-gp"><label style="color:#cbd5e1;">السعر</label><input type="text" id="cardPrice" value="5" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                            <div class="input-gp"><label style="color:#cbd5e1;">الصلاحية</label><input type="text" id="cardValid" value="24 ساعة" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                            <div class="input-gp"><label style="color:#cbd5e1;">الساعات</label><input type="number" id="cardExpiryHours" value="24" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                            <div class="input-gp"><label style="color:#cbd5e1;">الدقائق</label><input type="number" id="cardExpiryMinutes" value="0" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                        </div>
+                        <div class="grid">
+                            <div class="input-gp"><label style="color:#cbd5e1;">العدد الكلي</label><input type="number" id="cardCount" value="12" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                            <div class="input-gp"><label style="color:#cbd5e1;">الكروت في الصفحة</label><input type="number" id="cardsPerPageInput" value="20" min="1" max="100" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                            <div class="input-gp"><label style="color:#cbd5e1;">الوسام</label><select id="cardTag" onchange="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"><option>باقة شهرية</option><option>VIP أسبوعية</option><option>24 ساعة</option><option>10 ساعات</option></select></div>
+                        </div>
+                        <div class="grid">
+                            <div class="input-gp"><label style="color:#cbd5e1;">عرض الكرت (مم)</label><input type="number" id="cardWidthMM" value="48" min="30" max="90" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                            <div class="input-gp"><label style="color:#cbd5e1;">طول الكرت (مم)</label><input type="number" id="cardHeightMM" value="48" min="30" max="90" oninput="generateAction()" style="background:#1e293b;border-color:#334155;color:#fff;"></div>
+                        </div>
+                        <button onclick="saveCardsToAdminDB()" class="btn" style="background:#2563eb;">💾 اعتماد الكروت في المخزن</button>
+                        <button onclick="saveAsPDF()" class="btn" style="background:#059669;">📄 حفظ PDF بدقة عالية</button>
+                        <button onclick="saveViaPhoneSystem()" class="btn" style="background:#4f46e5;">🖨️ طباعة مباشرة</button>
+                        <div style="margin-top:16px;background:#1e293b;border-radius:12px;padding:12px;max-height:500px;overflow-y:auto;" id="previewArea"><div id="finalPrintWrapper" style="display:flex;flex-direction:column;gap:16px;align-items:center;"></div></div>
+                    </div>
+                </div>
+                <div id="admin-sec-audit-log" style="display:none;">
+                    <div class="section-title">🔍 سجل التدقيق الأمني (آخر 100 عملية)</div>
+                    <div id="audit-log-container" class="space-y-2"></div>
+                </div>
+            </div>
+            <!-- لوحة التحكم الرئيسية الشاملة -->
+            <div class="admin-master-panel" id="admin-master-panel">
+                <h4 style="color:#7e22ce;margin-bottom:12px;text-align:right;"><i class="fa-solid fa-crown"></i> لوحة التحكم الرئيسية للنظام</h4>
+                <div class="master-panel-grid">
+                    <button class="master-btn" style="background:#3b5998;" onclick="masterAction('backup')"><i class="fa-solid fa-download"></i> نسخ احتياطي</button>
+                    <button class="master-btn" style="background:#059669;" onclick="masterAction('restore')"><i class="fa-solid fa-upload"></i> استعادة نسخة</button>
+                    <button class="master-btn" style="background:#d97706;" onclick="masterAction('resetAll')"><i class="fa-solid fa-trash-can"></i> تصفير كامل</button>
+                    <button class="master-btn" style="background:#7e22ce;" onclick="masterAction('repairDB')"><i class="fa-solid fa-wrench"></i> إصلاح البيانات</button>
+                    <button class="master-btn" style="background:#dc2626;" onclick="masterAction('clearLogs')"><i class="fa-solid fa-eraser"></i> مسح السجلات</button>
+                    <button class="master-btn" style="background:#0ea5e9;" onclick="masterAction('refreshAll')"><i class="fa-solid fa-rotate"></i> تحديث كامل</button>
+                    <button class="master-btn" style="background:#8b5cf6;" onclick="openBackgroundSettings()"><i class="fa-solid fa-image"></i> خلفيات الصفحات</button>
+                    <button class="master-btn" style="background:#ec4899;" onclick="masterAction('toggleAdmin')"><i class="fa-solid fa-user-shield"></i> صلاحيات المدير</button>
+                </div>
+            </div>
+            <!-- لوحة معلومات الأمان -->
+            <div style="background: #f8fafc; border-radius: 16px; padding: 16px; margin-top: 20px; text-align: right; border: 1px solid #e2e8f0;">
+                <h4 style="color:#0f172a; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved"></i> ملخص الأمان</h4>
+                <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                    <span>آخر نسخة احتياطية: <b id="last-backup-time">--</b></span>
+                    <span>حالة التخزين: <b id="storage-status">نشط</b></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- شريط التنقل -->
+        <div class="nav" id="app-nav">
+            <div class="nav-item active" id="n-home" onclick="goNav('home-pg')"><i class="fa-solid fa-house"></i><span>المتجر</span></div>
+            <div class="nav-item" id="n-mycards" onclick="goNav('mycards-pg')"><i class="fa-solid fa-credit-card"></i><span>بطاقاتي</span></div>
+            <div class="nav-item" id="n-profile" onclick="goNav('profile-pg')"><i class="fa-solid fa-user"></i><span>حسابي</span></div>
+            <div class="nav-item admin-nav" id="n-admin" onclick="goNav('admin-pg')" style="display:none;"><i class="fa-solid fa-shield-halved"></i><span>الإدارة</span></div>
+        </div>
+    </div>
+
+    <script>
+        // ============ نظام التشفير المحسّن AES ============
+        const ENCRYPTION_KEY = 'SohaibNet_SecureKey_2025_V17';
+        function simpleEncrypt(text) { if (!text) return text; return CryptoJS.AES.encrypt(text, ENCRYPTION_KEY).toString(); }
+
+        function simpleDecrypt(encoded) { if (!encoded) return encoded; try { const bytes = CryptoJS.AES.decrypt(encoded,
+                ENCRYPTION_KEY); return bytes.toString(CryptoJS.enc.Utf8); } catch (e) { return encoded; } }
+
+        function hashPassword(password) { return CryptoJS.SHA256(password + 'SohaibNetSalt_2025').toString(); }
+
+        function verifyPassword(input, storedHash) { if (!storedHash || storedHash.length < 10) return input ===
+                storedHash; return hashPassword(input) === storedHash; }
+
+        // ============ سجل التدقيق ============
+        function addAuditLog(action, details, user) {
+            if (!db.auditLogs) db.auditLogs = [];
+            db.auditLogs.unshift({ id: Date.now(), timestamp: new Date().toISOString(), action, details, user: user || (db
+                    .storeSession ? db.storeSession.user : 'نظام'), ip: 'متصفح' });
+            if (db.auditLogs.length > 500) db.auditLogs = db.auditLogs.slice(0, 500);
+        }
+
+        // ============ نظام تخزين متقدم ============
+        function saveDB(showAlert = true) {
+            try {
+                if (!isStorageAvailable()) {
+                    if (showAlert) Swal.fire({ title: '⚠️ تنبيه هام',
+                        html: '<p>متصفحك لا يدعم التخزين المحلي.</p><p style="color:#e63946;">لن يتم حفظ البيانات بعد إغلاق الصفحة!</p>',
+                        icon: 'warning', confirmButtonText: 'فهمت' });
+                    return false;
+                }
+                const dbCopy = JSON.parse(JSON.stringify(db));
+                dbCopy.cards = dbCopy.cards.map(c => ({ ...c, pass: c.pass ? simpleEncrypt(c.pass) : c.pass }));
+                const dataStr = JSON.stringify(dbCopy);
+                const checksum = CryptoJS.SHA256(dataStr).toString();
+                localStorage.setItem('sohaibNetDB_v17', dataStr);
+                localStorage.setItem('sohaibNetDB_backup_v17', dataStr);
+                localStorage.setItem('sohaibNetDB_checksum', checksum);
+                localStorage.setItem('sohaibNetDB_timestamp', Date.now().toString());
+                updateLastBackupDisplay();
+                return true;
+            } catch (e) { console.error('فشل حفظ البيانات:', e); if (showAlert && e.name === 'QuotaExceededError') Swal.fire(
+                    'خطأ', 'مساحة التخزين ممتلئة! يرجى حذف بعض البيانات.', 'error'); return false; }
+        }
+
+        function loadDB() {
+            try {
+                if (!isStorageAvailable()) return JSON.parse(JSON.stringify(defaultDB));
+                const saved = localStorage.getItem('sohaibNetDB_v17');
+                const savedBackup = localStorage.getItem('sohaibNetDB_backup_v17');
+                const savedChecksum = localStorage.getItem('sohaibNetDB_checksum');
+                let dataToLoad = saved;
+                if (saved && savedChecksum) { const currentChecksum = CryptoJS.SHA256(saved).toString(); if (currentChecksum !==
+                        savedChecksum && savedBackup) { console.warn('بيانات تالفة، استعادة النسخة الاحتياطية');
+                        dataToLoad = savedBackup; } } else if (!saved && savedBackup) { dataToLoad = savedBackup; }
+                if (dataToLoad) { const parsed = JSON.parse(dataToLoad); if (!parsed.globalSettings) parsed.globalSettings =
+                        JSON.parse(JSON.stringify(defaultDB.globalSettings)); if (!parsed.transactions) parsed.transactions =
+                        []; if (!parsed.cards) parsed.cards = []; if (!parsed.auditLogs) parsed.auditLogs = []; if (!parsed
+                        .customBackgrounds) parsed.customBackgrounds = { hotspot: '', store: '' };
+                    parsed.cards.forEach(c => { c.expiryHours = c.expiryHours || 0;
+                        c.expiryMinutes = c.expiryMinutes || 0;
+                        c.activatedAt = c.activatedAt || null;
+                        c.customCreated = c.customCreated || false; if (c.pass && c.pass.length > 20) { try { c.pass =
+                                simpleDecrypt(c.pass); } catch (e) {} } }); return parsed; } } catch (e) { console.error(
+                    'خطأ في استعادة البيانات:', e); const backup = localStorage.getItem('sohaibNetDB_backup_v17'); if (
+                    backup) { try { const parsed = JSON.parse(backup); if (parsed.users && parsed.cards) return parsed; } catch (
+                        e2) {} } }
+            return JSON.parse(JSON.stringify(defaultDB));
+        }
+
+        function isStorageAvailable() { try { const t = '__st__';
+                localStorage.setItem(t, t);
+                localStorage.removeItem(t); return true; } catch (e) { return false; } }
+
+        function updateLastBackupDisplay() { const el = document.getElementById('last-backup-time'); if (el) { const ts =
+                localStorage.getItem('sohaibNetDB_timestamp'); if (ts) el.innerText = new Date(+ts).toLocaleString(
+                'ar-SA'); else el.innerText = 'غير متوفر'; } }
+
+        // ============ البيانات الافتراضية ============
+        const defaultDB = {
+            users: [{ id: 1, name: "م.صهيب قديح", user: "admin", pass: hashPassword("1234"), phone: "+970599038268",
+                balance: 5000, role: "admin" }, { id: 2, name: "أحمد محمد", user: "demo", pass: hashPassword("123"),
+                phone: "059111222", balance: 150, role: "user" }
+            ],
+            packages: [{ id: 1, title: "10 ساعات", price: 2, desc: "سرعة 3 ميجا", icon: "fa-clock", color: "#10b981",
+                    defaultExpiryHours: 10, defaultExpiryMinutes: 0 }, { id: 2, title: "24 ساعة", price: 3,
+                    desc: "إنترنت 2 ميجا", icon: "fa-bolt", color: "#f97316", defaultExpiryHours: 24,
+                    defaultExpiryMinutes: 0 }, { id: 3, title: "VIP 3 ساعات", price: 3, desc: "سرعة 5 ميجا",
+                    icon: "fa-star", color: "#a855f7", defaultExpiryHours: 3, defaultExpiryMinutes: 0 }, { id: 4,
+                    title: "باقة شهرية", price: 80, desc: "سرعة 2 ميجا ثابتة", icon: "fa-calendar-days",
+                    color: "#3b82f6", defaultExpiryHours: 720, defaultExpiryMinutes: 0 }
+            ],
+            cards: [{ user: "87228", pass: "444", pkgTitle: "10 ساعات", status: "مستعمل", owner: "demo",
+                    serial: "SN-100001", valid: "10 ساعات", price: "2", activatedAt: "2026-05-28T10:00:00",
+                    expiryHours: 10, expiryMinutes: 0, customCreated: false }, { user: "35412", pass: "992",
+                    pkgTitle: "24 ساعة", status: "متاح", owner: "admin", serial: "SN-100002", valid: "24 ساعة",
+                    price: "3", activatedAt: null, expiryHours: 24, expiryMinutes: 0, customCreated: false }, {
+                    user: "98214",
+                    pass: "115",
+                    pkgTitle: "باقة شهرية",
+                    status: "متاح",
+                    owner: "admin",
+                    serial: "SN-100003",
+                    valid: "30 يوم",
+                    price: "80",
+                    activatedAt: null,
+                    expiryHours: 720,
+                    expiryMinutes: 0,
+                    customCreated: false
+                }],
+            transactions: [{ id: 101, user: "demo", type: "buy", title: "شراء 10 ساعات", desc: "يوزر:87228",
+                amount: -2, date: "2026-05-28" }, { id: 102, user: "أحمد محمد", type: "system", title: "شحن رصيد",
+                desc: "إداري", amount: 150, date: "2026-05-28" }],
+            auditLogs: [],
+            storeSession: null,
+            customBackgrounds: { hotspot: '', store: '' },
+            globalSettings: { hotspotTitle: "Sohaib Net", hotspotSubtitle: "شبكة Sohaib Net لخدمات الإنترنت",
+                contactPhone: "+970599038268", footerText: "النظام متخصص لبيع بطاقات Sohaib Net", ownerName: "م.صهيب قديح",
+                autoRedirectDelay: 4000, statusPageDelay: 2000, sessionTimeout: 30 }
+        };
+
+        let db = loadDB();
+        let sessionTimer = null;
+
+        // ============ تطبيق الخلفيات المخصصة ============
+        function applyCustomBackgrounds() {
+            const hotspotBg = db.customBackgrounds?.hotspot ||
+                'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80';
+            const storeBg = db.customBackgrounds?.store ||
+                'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80';
+            document.documentElement.style.setProperty('--hotspot-bg', `url('${hotspotBg}')`);
+            document.documentElement.style.setProperty('--store-bg', `url('${storeBg}')`);
+        }
+
+        // ============ انتهاء الجلسة التلقائي ============
+        function resetSessionTimer() { if (sessionTimer) clearTimeout(sessionTimer); if (db.storeSession) { const
+                timeoutMinutes = db.globalSettings.sessionTimeout || 30;
+                sessionTimer = setTimeout(() => { Swal.fire({ title: '⏰ انتهت الجلسة',
+                    text: 'تم تسجيل الخروج تلقائياً بسبب عدم النشاط.', icon: 'info',
+                    confirmButtonText: 'حسناً' }).then(() => logoutStore()); }, timeoutMinutes * 60 * 1000); } }
+        document.addEventListener('click', resetSessionTimer);
+        document.addEventListener('keydown', resetSessionTimer);
+        window.addEventListener('beforeunload', () => { saveDB(false); });
+        window.addEventListener('pagehide', () => { saveDB(false); });
+        window.addEventListener('visibilitychange', () => { if (document.hidden) saveDB(false); });
+
+        // ============ التحقق من انتهاء الصلاحية ============
+        function isCardExpired(cardObj) { if (!cardObj.activatedAt || cardObj.status === 'متاح') return false; const d =
+                new Date(cardObj.activatedAt); if (isNaN(d.getTime())) return false; const ms = (cardObj.expiryHours || 0) *
+                3600000 + (cardObj.expiryMinutes || 0) * 60000; return ms > 0 && new Date() > new Date(d.getTime() + ms); }
+
+        function getCardExpiryDate(cardObj) { if (!cardObj.activatedAt) return 'غير مفعلة'; const d = new Date(cardObj
+                .activatedAt); if (isNaN(d.getTime())) return 'غير معروف'; const ms = (cardObj.expiryHours || 0) * 3600000 + (
+                cardObj.expiryMinutes || 0) * 60000; return ms > 0 ? new Date(d.getTime() + ms).toLocaleString('ar-SA') :
+                'غير محدود'; }
+
+        // ============ التهيئة ============
+        window.onload = () => { if (!db.customBackgrounds) db.customBackgrounds = { hotspot: '', store: '' };
+            applyCustomBackgrounds(); const darkMode = localStorage.getItem('sohaibNet_darkMode') === 'true'; if (darkMode)
+                document.body.classList.add('dark-mode'); if (db.storeSession) { const u = db.users.find(x => x.user === db
+                    .storeSession?.user); if (u) { db.storeSession = u;
+                    initStoreUI();
+                    resetSessionTimer(); } else { db.storeSession = null;
+                    saveDB(false);
+                    showAuth('hotspot-pg'); } } else { showAuth('hotspot-pg'); }
+            generateAction();
+            updateNotifDot();
+            applyGlobalSettings();
+            updateLastBackupDisplay();
+            setInterval(autoBackup, 300000);
+            setInterval(() => saveDB(false), 60000); };
+
+        function autoBackup() { if (isStorageAvailable()) { const dataStr = JSON.stringify(db);
+                localStorage.setItem('sohaibNetDB_backup_v17', dataStr);
+                localStorage.setItem('sohaibNetDB_timestamp', Date.now().toString());
+                updateLastBackupDisplay(); } }
+
+        function toggleDarkMode() { const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('sohaibNet_darkMode', isDark.toString());
+            Swal.fire({ title: isDark ? '🌙 الوضع الليلي مفعل' : '☀️ الوضع النهاري مفعل', timer: 1500,
+            showConfirmButton: false, toast: true, position: 'bottom' }); }
+
+        function applyGlobalSettings() { const gs = db.globalSettings;
+            document.querySelectorAll('.pro-logo h2').forEach(el => { if (el.closest('#hotspot-pg') || el.closest(
+                    '#status-pg')) el.textContent = gs.hotspotTitle; });
+            document.querySelectorAll('.logo-sub').forEach(el => { if (el.closest('#hotspot-pg') || el.closest('#status-pg'))
+                    el.textContent = gs.hotspotSubtitle; });
+            document.querySelectorAll('.store-footer').forEach(el => { el.innerHTML = (gs.footerText) + '<br>' + (gs
+                    .ownerName); }); }
+
+        // ============ التنقل بين الصفحات ============
+        function showAuth(pageId) { document.getElementById('app-nav').classList.remove('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active'); if (sessionTimer) clearTimeout(sessionTimer); }
+
+        function goNav(pageId) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); const navId = 'n-' + pageId
+                .split('-')[0]; const navItem = document.getElementById(navId); if (navItem) navItem.classList.add(
+                'active'); if (pageId === 'mycards-pg') filterMyCards(); if (pageId === 'home-pg') handleHomeRouting(); if (
+                pageId === 'admin-pg') { buildAdminPanel();
+                updateLastBackupDisplay(); }
+            document.getElementById('app-nav').classList.add('active');
+            resetSessionTimer();
+            saveDB(false); }
+
+        function goToStoreWithDelay() { Swal.fire({ title: '🔄 جاري التوجيه',
+            html: '<p>يتم تحويلك إلى متجر البطاقات الذكي...</p>', timer: db.globalSettings.autoRedirectDelay || 4000,
+            timerProgressBar: true, showConfirmButton: false, allowOutsideClick: false,
+            willClose: () => { showAuth('login-pg'); } }); }
+
+        // ============ الاتصال بالإنترنت ============
+        function connectWifi() { const u = document.getElementById('wifi-user').value.trim(); const p = document.getElementById(
+                'wifi-pass').value.trim(); if (!u || !p) { Swal.fire('تنبيه', 'أدخل اسم المستخدم وكلمة المرور',
+            'warning'); return; } const card = db.cards.find(c => c.user === u && c.pass === p); if (!card) { Swal.fire(
+                'خطأ', 'البطاقة غير مسجلة في النظام', 'error'); return; } if (card.status === 'متاح') { card.status =
+                'مستعمل';
+            card.activatedAt = new Date().toISOString();
+            addAuditLog('تفعيل بطاقة', `يوزر: ${u} | باقة: ${card.pkgTitle}`, u);
+            saveDB(); } if (isCardExpired(card)) { Swal.fire({ title: '⚠️ انتهت صلاحية البطاقة',
+                html: `<p style="text-align:right;">هذه البطاقة لم تعد صالحة.</p><p style="text-align:right;color:#e63946;">يرجى شراء بطاقة جديدة.</p>`,
+                icon: 'warning', confirmButtonText: 'الذهاب للمتجر', showCancelButton: true,
+                cancelButtonText: 'عرض التفاصيل' }).then(r => { if (r.isConfirmed) goToStoreWithDelay(); else
+                    showStatusPage(card); }); return; }
+            Swal.fire({ title: '✅ تم الاتصال بنجاح', html: `<p>الباقة: <b>${card.pkgTitle||'مخصصة'}</b></p><p>مرحباً بك في شبكة صهيب نت!</p>`,
+                timer: db.globalSettings.statusPageDelay || 2000, timerProgressBar: true, showConfirmButton: false,
+                willClose: () => showStatusPage(card) }); }
+
+        function showStatusPage(card) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('status-pg').classList.add('active');
+            document.getElementById('app-nav').classList.remove('active'); const exp = isCardExpired(card);
+            document.getElementById('status-pkg-title').innerText = card.pkgTitle || 'بطاقة مخصصة';
+            document.getElementById('status-user').innerText = card.user;
+            document.getElementById('status-pkg').innerText = card.pkgTitle || 'مخصصة';
+            document.getElementById('status-price').innerText = (card.price || '0') + ' ₪';
+            document.getElementById('status-valid').innerText = card.valid ||
+                `${card.expiryHours||0} ساعة ${card.expiryMinutes||0} دقيقة`;
+            document.getElementById('status-serial').innerText = card.serial || '--';
+            document.getElementById('status-start').innerText = card.activatedAt ? new Date(card.activatedAt).toLocaleString(
+                'ar-SA') : 'غير مفعلة';
+            document.getElementById('status-expiry').innerText = getCardExpiryDate(card);
+            document.getElementById('status-badge-el').className = exp ? 'status-badge-expired' : 'status-badge-active';
+            document.getElementById('status-badge-el').innerText = exp ? '🔴 منتهية الصلاحية' : '🟢 نشط';
+            document.getElementById('status-main-icon').innerText = exp ? '⏰' : '✅';
+            document.getElementById('status-expired-actions').style.display = exp ? 'block' : 'none';
+            document.getElementById('status-goto-store-btn').style.display = exp ? 'none' : 'block'; }
+
+        function goToStoreFromStatus() { if (db.storeSession) initStoreUI(); else showAuth('login-pg'); }
+
+        function handleHomeRouting() { const u = db.users.find(x => x.user === db.storeSession?.user); if (u && u.role ===
+                'admin') goNav('admin-pg'); else toggleDashboardView('shop'); }
+
+        // ============ تسجيل الدخول والتسجيل ============
+        function loginStore() { const user = document.getElementById('l-user').value.trim().toLowerCase(); const pass =
+            document.getElementById('l-pass').value.trim(); const acc = db.users.find(u => u.user === user &&
+                verifyPassword(pass, u.pass)); if (!acc) { Swal.fire('خطأ', 'بيانات الدخول غير صحيحة', 'error');
+                addAuditLog('محاولة دخول فاشلة', `يوزر: ${user}`, user); return; }
+            db.storeSession = acc;
+            saveDB();
+            addAuditLog('تسجيل دخول', `المستخدم: ${acc.name} (${acc.user})`, acc.user);
+            resetSessionTimer();
+            initStoreUI(); }
+
+        function registerStore() { const n = document.getElementById('r-name').value.trim(),
+                u = document.getElementById('r-user').value.trim().toLowerCase(), ph = document.getElementById('r-phone')
+                .value.trim(), p = document.getElementById('r-pass').value.trim(), pc = document.getElementById(
+                    'r-pass-confirm').value.trim(); if (!n || !u || !ph || !p || !pc) { Swal.fire('تنبيه',
+                    'الرجاء ملء جميع الحقول', 'warning'); return; } if (p !== pc) { Swal.fire('خطأ',
+                    'كلمتا المرور غير متطابقتين', 'error'); return; } if (p.length < 3) { Swal.fire('خطأ',
+                    'كلمة المرور يجب أن تكون 3 أحرف على الأقل', 'error'); return; } if (db.users.some(x => x.user === u)) { Swal
+                .fire('خطأ', 'اسم المستخدم موجود مسبقاً', 'error'); return; } const newUser = { id: Date.now(), name: n,
+                user: u, pass: hashPassword(p), phone: ph, balance: 0, role: "user" };
+            db.users.push(newUser);
+            addAuditLog('تسجيل مستخدم جديد', `الاسم: ${n} | اليوزر: ${u}`, u);
+            saveDB();
+            Swal.fire('تم بنجاح', 'تم إنشاء الحساب. يمكنك الآن تسجيل الدخول.', 'success');
+            showAuth('login-pg'); }
+
+        function forgotPassword() { Swal.fire({ title: '🔑 استعادة كلمة المرور',
+            html: `<p style="text-align:right;">أدخل اسم المستخدم ورقم الهاتف المسجل.</p><input id="fp-user" class="swal2-input" placeholder="اسم المستخدم" style="text-align:right;"><input id="fp-phone" class="swal2-input" placeholder="رقم الهاتف" style="text-align:right;">`,
+            showCancelButton: true, confirmButtonText: 'استعادة', cancelButtonText: 'إلغاء',
+            confirmButtonColor: '#3b5998', preConfirm: () => { const user = document.getElementById('fp-user').value
+                    .trim().toLowerCase(), ph = document.getElementById('fp-phone').value.trim(); if (!user || !
+                    ph) { Swal.showValidationMessage('الرجاء ملء جميع الحقول'); return false; } const acc = db.users
+                    .find(u => u.user === user && u.phone === ph); if (!acc) { Swal.showValidationMessage(
+                        'لم يتم العثور على حساب مطابق'); return false; } return acc; } }).then(r => { if (r
+                .isConfirmed) { const acc = r.value; const newPass = Math.floor(1000 + Math.random() * 9000).toString();
+                acc.pass = hashPassword(newPass);
+                addAuditLog('استعادة كلمة مرور', `المستخدم: ${acc.user}`, acc.user);
+                saveDB();
+                Swal.fire({ title: '✅ تم استعادة كلمة المرور',
+                    html: `<p>كلمة المرور الجديدة: <b style="color:#3b5998;font-size:18px;">${newPass}</b></p>`,
+                    icon: 'success', confirmButtonText: 'حسناً' }); } }); }
+
+        function initStoreUI() { const u = db.users.find(x => x.user === db.storeSession?.user); if (!u) { logoutStore
+            (); return; }
+            db.storeSession = u;
+            saveDB(false);
+            document.getElementById('app-nav').classList.add('active'); if (u.role === 'admin') { document.getElementById(
+                    'n-admin').style.display = 'flex';
+                document.getElementById('n-mycards').style.display = 'none';
+                document.getElementById('user-exclusive-view').style.display = 'none';
+                goNav('admin-pg'); } else { document.getElementById('n-admin').style.display = 'none';
+                document.getElementById('n-mycards').style.display = 'flex';
+                document.getElementById('user-exclusive-view').style.display = 'block';
+                document.getElementById('u-balance-txt').innerText = u.balance.toFixed(2) + ' ₪';
+                document.getElementById('user-display').innerText = 'المشترك: ' + u.name;
+                goNav('home-pg'); }
+            document.getElementById('p-name').innerText = u.name;
+            document.getElementById('p-user').innerText = u.user;
+            document.getElementById('p-phone').innerText = u.phone || 'غير مسجل';
+            updateNotifDot();
+            applyGlobalSettings();
+            resetSessionTimer(); }
+
+        function logoutStore() { if (db.storeSession) addAuditLog('تسجيل خروج',
+                `المستخدم: ${db.storeSession.name}`, db.storeSession.user);
+            db.storeSession = null; if (sessionTimer) clearTimeout(sessionTimer);
+            saveDB();
+            showAuth('login-pg'); }
+
+        function updateUserPassword() { const old = document.getElementById('p-old-pass').value.trim(); const nw = document
+            .getElementById('p-new-pass').value.trim(); const u = db.users.find(x => x.user === db.storeSession?.user); if (
+                !old || !nw) { Swal.fire('تنبيه', 'أدخل كلمات المرور', 'warning'); return; } if (!verifyPassword(old, u.pass))
+             { Swal.fire('خطأ', 'كلمة المرور الحالية غير صحيحة', 'error'); return; } if (nw.length < 3) { Swal.fire('خطأ',
+                'كلمة المرور الجديدة قصيرة جداً', 'error'); return; }
+            u.pass = hashPassword(nw);
+            addAuditLog('تغيير كلمة المرور', `المستخدم: ${u.user}`, u.user);
+            saveDB();
+            Swal.fire('تم', 'تم تغيير كلمة المرور بنجاح', 'success'); }
+
+        // ============ نسخ رابط الموقع ============
+        function copySiteLink() { const url = window.location.href; if (navigator.clipboard) { navigator.clipboard.writeText(
+                url).then(() => Swal.fire({ title: '✅ تم نسخ الرابط', timer: 1500, showConfirmButton: false,
+                toast: true, position: 'bottom' })); } else { fallbackCopy(url); } }
+
+        function fallbackCopy(text) { const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;opacity:0;';
+            document.body.appendChild(ta);
+            ta.select(); try { document.execCommand('copy');
+                Swal.fire({ title: '✅ تم النسخ', timer: 1500, showConfirmButton: false, toast: true,
+                position: 'bottom' }); } catch (e) { Swal.fire('تنبيه', 'البيانات: ' + text, 'info'); }
+            document.body.removeChild(ta); }
+
+        // ============ شحن رصيد مع فاتورة ============
+        function openChargeBalanceModal() { const cu = db.storeSession; if (!cu) return;
+            Swal.fire({ title: '💰 شحن رصيد',
+                html: `<p style="text-align:right;">رقم الهاتف المرتبط: <b>${cu.phone||'غير مسجل'}</b></p><input id="ch-amount" type="number" class="swal2-input" placeholder="المبلغ المراد شحنه"><div style="text-align:right; margin: 10px 0;"><label for="ch-invoice" style="background:#3b5998; color:#fff; padding: 8px 16px; border-radius: 8px; cursor:pointer;"><i class="fa-solid fa-upload"></i> إرفاق صورة فاتورة الحوالة</label><input type="file" id="ch-invoice" accept="image/*" style="display:none;" onchange="previewInvoiceFile(this)"></div><div id="invoice-preview" style="text-align:center;margin-top:10px;"></div>`,
+                showCancelButton: true, confirmButtonText: 'إرسال الطلب', cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#f59e0b', preConfirm: () => { const amount = +document.getElementById(
+                        'ch-amount').value; const invoiceFile = document.getElementById('ch-invoice').files[
+                    0]; if (!amount || amount <= 0) { Swal.showValidationMessage('أدخل مبلغ صحيح'); return false; }
+                    return { amount, invoiceFile }; } }).then(r => { if (r.isConfirmed) { const { amount,
+                    invoiceFile } = r.value; let invoiceData = null; if (invoiceFile) { const reader =
+                    new FileReader();
+                    reader.onload = function(e) { invoiceData = e.target.result;
+                        processChargeRequest(cu, amount, invoiceData); };
+                    reader.readAsDataURL(invoiceFile); } else { processChargeRequest(cu, amount, null); } } }); }
+
+        function previewInvoiceFile(input) { const preview = document.getElementById('invoice-preview'); if (input.files &&
+                input.files[0]) { const reader = new FileReader();
+                reader.onload = function(e) { preview.innerHTML =
+                    `<img src="${e.target.result}" style="max-width:200px;max-height:150px;border-radius:8px;border:1px solid #ddd;">`; };
+                reader.readAsDataURL(input.files[0]); } else { preview.innerHTML = ''; } }
+
+        function processChargeRequest(user, amount, invoiceData) { addAuditLog('طلب شحن رصيد',
+                `المستخدم: ${user.user} طلب شحن ${amount} ₪`, user.user);
+            Swal.fire({ title: '✅ تم استلام الطلب',
+                html: `<p>تم تسجيل طلب شحن رصيد بقيمة <b>${amount} ₪</b></p><p>سيتم مراجعة الطلب وتأكيده قريباً.</p>`,
+                icon: 'success' }); }
+
+        // ============ لوحة المتجر ============
+        function toggleDashboardView(view) { const container = document.getElementById('dashboard-dynamic-content');
+            container.innerHTML = ''; const u = db.storeSession; if (view === 'shop') { container.innerHTML =
+                '<h3 style="font-size:15px;margin-bottom:14px;font-weight:800;text-align:right;">🛒 الباقات المتاحة</h3><div id="inner-shop-list"></div>';
+            document.getElementById('inner-shop-list').innerHTML = db.packages.map(p => { const cnt = db.cards.filter(c =>
+                    c.pkgTitle === p.title && c.status === 'متاح').length; const oos = cnt === 0; return `
+            <div class="item" style="border-right:4px solid ${p.color};${oos?'opacity:0.6;':''}"><div class="card-details"><div class="item-icon-wrapper" style="background:${p.color};"><i class="fa-solid ${p.icon}"></i></div><div><strong>${p.title}</strong><p style="font-size:11px;color:var(--muted);">${p.desc}</p>${oos?'<span class="badge-out-of-stock">⚠️ نفدت الكروت</span>':`<span style="font-size:10px;color:#10b981;">✅ متوفر: ${cnt} كرت</span>`}</div></div><div style="text-align:left;"><strong style="color:${p.color};">${p.price} ₪</strong><button class="btn-sm" style="background:${oos?'#94a3b8':p.color};" onclick="confirmBuyCard(${p.id},${p.price},'${p.title.replace(/'/g,"\\'")}')" ${oos?'disabled':''}>${oos?'نفد':'شراء'}</button></div></div>`; })
+                .join(''); } else if (view === 'invoice') { container.innerHTML =
+                '<h3 style="font-size:15px;margin-bottom:14px;font-weight:800;text-align:right;">📄 كشف الحساب</h3><div id="tx-history-list"></div>';
+            const tx = db.transactions.filter(t => t.user === u.user || t.user === u.name);
+            document.getElementById('tx-history-list').innerHTML = tx.length === 0 ?
+                '<p style="text-align:center;color:var(--muted);">لا توجد عمليات</p>' : [...tx].reverse().map(t =>
+                    `<div class="tx-item"><div style="display:flex;gap:12px;align-items:center;"><div style="width:36px;height:36px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:${t.amount<0?'#e63946':'#2ecc71'}"><i class="fa-solid ${t.amount<0?'fa-arrow-up':'fa-arrow-down'}"></i></div><div><div class="tx-title">${t.title}</div><div class="tx-desc">${t.desc} | ${t.date}</div></div></div><div class="tx-amount ${t.amount<0?'tx-minus':'tx-plus'}">${t.amount<0?'':'+'}${t.amount.toFixed(2)} ₪</div></div>`
+                    ).join(''); } }
+
+        function confirmBuyCard(pkgId, price, pkgTitle) { const u = db.users.find(x => x.user === db.storeSession?.user);
+            const pkg = db.packages.find(p => p.id === pkgId); const cnt = db.cards.filter(c => c.pkgTitle === pkg.title &&
+                c.status === 'متاح').length; if (cnt === 0) { Swal.fire('⚠️ نفدت الكروت',
+                `لا توجد كروت لباقة "${pkgTitle}".`, 'warning'); return; } if (u.balance < price) { Swal.fire('💰 رصيد غير كاف',
+                `رصيدك: <b>${u.balance.toFixed(2)} ₪</b> | السعر: <b>${price} ₪</b>`, 'error'); return; }
+            Swal.fire({ title: '🛒 تأكيد الشراء',
+                html: `<div style="background:#f8fafc;border-radius:16px;padding:16px;text-align:right;border:1px solid #e2e8f0;"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #e2e8f0;"><span>📦 الباقة</span><strong>${pkgTitle}</strong></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #e2e8f0;"><span>💵 السعر</span><strong style="color:${pkg.color};">${price} ₪</strong></div><div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;"><span>🔮 الرصيد بعد الشراء</span><strong style="color:#10b981;">${(u.balance-price).toFixed(2)} ₪</strong></div></div>`,
+                icon: 'question', showCancelButton: true, confirmButtonText: '✅ تأكيد الشراء',
+                cancelButtonText: '❌ إلغاء', confirmButtonColor: '#2ecc71',
+            cancelButtonColor: '#94a3b8' }).then(r => { if (r.isConfirmed) buyCard(pkgId, price); }); }
+
+        function buyCard(pkgId, price) { const u = db.users.find(x => x.user === db.storeSession?.user); const pkg = db
+                .packages.find(p => p.id === pkgId); if (u.balance < price) { Swal.fire('رصيد غير كاف', '', 'error'); return; }
+            u.balance = +(u.balance - price).toFixed(2); let stock = db.cards.find(c => c.pkgTitle === pkg.title && c
+                .status === 'متاح' && c.owner === 'admin'); let fU, fP; if (stock) { stock.status = 'مستعمل';
+                stock.owner = u.user;
+                stock.activatedAt = new Date().toISOString();
+                stock.expiryHours = pkg.defaultExpiryHours || 24;
+                stock.expiryMinutes = pkg.defaultExpiryMinutes || 0;
+                fU = stock.user;
+                fP = stock.pass; } else { fU = Math.floor(10000 + Math.random() * 90000).toString();
+                fP = Math.floor(100 + Math.random() * 900).toString();
+                db.cards.unshift({ user: fU, pass: fP, pkgTitle: pkg.title, status: 'مستعمل', owner: u.user,
+                    serial: 'SN-' + Math.floor(100000 + Math.random() * 900000), valid: pkg.desc,
+                    price: pkg.price.toString(), activatedAt: new Date().toISOString(),
+                    expiryHours: pkg.defaultExpiryHours || 24, expiryMinutes: pkg.defaultExpiryMinutes || 0,
+                    customCreated: false }); }
+            db.transactions.push({ id: Date.now(), user: u.user, type: 'buy', title: 'شراء ' + pkg.title,
+                desc: 'يوزر: ' + fU, amount: -price, date: new Date().toISOString().split('T')[0] });
+            addAuditLog('شراء بطاقة', `المستخدم: ${u.user} | باقة: ${pkg.title} | يوزر: ${fU}`, u.user);
+            saveDB();
+            initStoreUI();
+            updateNotifDot();
+            Swal.fire({ title: '🎉 تم الشراء',
+                html: `<div style="background:linear-gradient(135deg,#0f172a,#1e3799);border-radius:16px;padding:16px;color:#fff;text-align:center;"><p>الباقة: <b>${pkg.title}</b></p><div style="background:rgba(255,255,255,0.1);border-radius:10px;padding:12px;margin:8px 0;"><p style="font-size:18px;">👤 اليوزر: <b style="color:#fbbf24;">${fU}</b></p><p style="font-size:18px;">🔑 المرور: <b style="color:#fbbf24;">${fP}</b></p></div></div>`,
+                icon: 'success', confirmButtonText: '🚀 اتصال فوري', showCancelButton: true,
+            cancelButtonText: 'حسناً' }).then(r => { if (r.isConfirmed) autoLoginWifi(fU, fP); }); }
+
+        function autoLoginWifi(u, p) { showAuth('hotspot-pg');
+            document.getElementById('wifi-user').value = u;
+            document.getElementById('wifi-pass').value = p;
+            connectWifi(); }
+
+        function filterMyCards() { const q = document.getElementById('search-my-cards')?.value.trim().toLowerCase() || '';
+            const list = document.getElementById('my-cards-list'); if (!list) return; const filtered = db.cards.filter(c =>
+                c.owner === db.storeSession?.user && (c.user.includes(q) || c.pkgTitle?.toLowerCase().includes(q)));
+            list.innerHTML = filtered.length === 0 ?
+                '<p style="text-align:center;color:var(--muted);padding:30px;">لا توجد بطاقات</p>' : filtered.map(c => { const
+                    exp = isCardExpired(c); return `
+            <div class="item" style="border-right:4px solid ${exp?'#e63946':'#3b82f6'};"><div><span class="badge" style="background:${exp?'#fef2f2':'#eff6ff'};color:${exp?'#e63946':'#3b82f6'};">${c.pkgTitle||'مخصصة'}</span><strong style="display:block;">يوزر: ${c.user}</strong><span style="font-size:11px;">مرور: ${c.pass}</span><span style="font-size:10px;color:${exp?'#e63946':'#64748b'};">${exp?'⚠️ منتهية':''} تنتهي: ${getCardExpiryDate(c)}</span></div><div style="display:flex;gap:4px;flex-direction:column;align-items:flex-end;"><button class="btn-xs" style="background:#64748b;" onclick="copyCardData('${c.user}','${c.pass}')"><i class="fa-solid fa-copy"></i> نسخ</button><button class="btn-xs" style="background:${exp?'#e63946':'var(--success)'};" onclick="autoLoginWifi('${c.user}','${c.pass}')"><i class="fa-solid fa-globe"></i> دخول</button></div></div>`; })
+                .join(''); }
+
+        function copyCardData(u, p) { const text = `اليوزر: ${u}\nالمرور: ${p}`; if (navigator.clipboard) navigator.clipboard
+                .writeText(text).then(() => Swal.fire({ title: '✅ تم النسخ', timer: 1500, showConfirmButton: false,
+                    toast: true, position: 'bottom' })).catch(() => fallbackCopy(text)); else fallbackCopy(text); }
+
+        function openSendBalanceModal() { const cu = db.storeSession; if (!cu) return;
+            Swal.fire({ title: '📤 تحويل رصيد',
+                html: `<p style="text-align:right;">💰 رصيدك: <b style="color:#10b981;">${cu.balance.toFixed(2)} ₪</b></p><input id="st-phone" class="swal2-input" placeholder="📞 رقم جوال المستلم"><input id="st-amount" type="number" class="swal2-input" placeholder="💵 المبلغ" min="1">`,
+                showCancelButton: true, confirmButtonText: 'تأكيد', cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#f97316', preConfirm: () => { const ph = document.getElementById('st-phone')
+                        .value.trim(), amt = +document.getElementById('st-amount').value; if (!ph || !amt || amt <=
+                        0) { Swal.showValidationMessage('بيانات غير صحيحة'); return false; } const rec = db.users.find(
+                        u => u.phone === ph && u.user !== cu.user); if (!rec) { Swal.showValidationMessage(
+                        'المستلم غير مسجل'); return false; } if (cu.balance < amt) { Swal.showValidationMessage(
+                        'رصيدك غير كافٍ'); return false; } return { ph, amt, rec }; } }).then(r => { if (r.isConfirmed
+                    ) { const { amt, rec } = r.value;
+                cu.balance = +(cu.balance - amt).toFixed(2);
+                rec.balance = +(rec.balance + amt).toFixed(2);
+                db.transactions.push({ id: Date.now(), user: cu.user, type: 'send', title: 'تحويل إلى ' + rec.name,
+                    desc: 'صادر', amount: -amt, date: new Date().toISOString().split('T')[0] }, { id: Date.now() +
+                        1, user: rec.user, type: 'receive', title: 'استلام من ' + cu.name, desc: 'وارد',
+                    amount: amt, date: new Date().toISOString().split('T')[0] });
+                addAuditLog('تحويل رصيد', `من: ${cu.user} | إلى: ${rec.user} | مبلغ: ${amt}`, cu.user);
+                saveDB();
+                initStoreUI();
+                updateNotifDot();
+                Swal.fire('✅ تم', `تم تحويل ${amt.toFixed(2)} ₪ إلى ${rec.name}`, 'success'); } }); }
+
+        function updateNotifDot() { const dot = document.getElementById('notif-dot'); if (!dot || !db.storeSession) return;
+            const tx = db.transactions.filter(t => t.user === db.storeSession.user || t.user === db.storeSession.name);
+            const last = +localStorage.getItem('sohaibNet_lastSeen_' + db.storeSession.user) || 0;
+            dot.style.display = tx.length > last ? 'flex' : 'none'; }
+
+        function openNotificationsModal() { if (!db.storeSession) return; const tx = db.transactions.filter(t => t.user ===
+                db.storeSession.user || t.user === db.storeSession.name);
+            Swal.fire({ title: '🔔 الإشعارات', html: tx.length === 0 ?
+                    '<p style="text-align:center;">لا توجد إشعارات</p>' : [...tx].reverse().map(t =>
+                        `<div style="background:#fff;border-radius:14px;padding:12px;margin-bottom:8px;border-right:4px solid ${t.amount<0?'#e63946':'#2ecc71'};"><strong>${t.title}</strong><p style="font-size:11px;">${t.desc}</p><span style="float:left;font-weight:800;color:${t.amount<0?'#e63946':'#2ecc71'};">${t.amount<0?'':'+'}${t.amount.toFixed(2)} ₪</span><div style="clear:both;font-size:9px;">${t.date}</div></div>`
+                        ).join(''),
+                confirmButtonText: 'إغلاق', width: '90%' });
+            localStorage.setItem('sohaibNet_lastSeen_' + db.storeSession.user, tx.length.toString());
+            updateNotifDot(); }
+
+        function openPointsOfSale() { Swal.fire({ title: '📍 نقاط البيع',
+            html: `<div style="text-align:right;"><div style="background:#f8fafc;border-radius:16px;padding:16px;margin-bottom:16px;border-right:4px solid #3b5998;"><h4>📍 مكتب القادسية الرئيسي</h4></div>${db.packages.map(p=>`<div style="background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;border-right:4px solid ${p.color};display:flex;align-items:center;gap:12px;"><div style="width:44px;height:44px;border-radius:12px;background:${p.color};display:flex;align-items:center;justify-content:center;color:#fff;"><i class="fa-solid ${p.icon}"></i></div><div style="flex:1;"><strong>${p.title}</strong><span style="font-size:11px;color:#64748b;display:block;">${p.desc}</span></div><strong style="color:${p.color};font-size:16px;">${p.price} ₪</strong></div>`).join('')}</div>`,
+            confirmButtonText: 'حسناً', width: '95%' }); }
+
+        function openPricesQuickView() { Swal.fire({ title: '💰 قائمة الأسعار',
+            html: db.packages.map(p =>
+                `<div style="display:flex;justify-content:space-between;padding:14px;background:#fff;border-radius:14px;margin-bottom:8px;border-right:4px solid ${p.color};"><strong><i class="fa-solid ${p.icon}" style="color:${p.color};margin-left:8px;"></i>${p.title}</strong><strong style="color:${p.color};font-size:16px;">${p.price} ₪</strong></div>`
+                ).join(''), confirmButtonText: 'حسناً', width: '90%' }); }
+
+        function openWhatsApp(n) { window.open(
+                `https://wa.me/${n.replace(/^0/,'+970')}?text=${encodeURIComponent('السلام عليكم، استفسار عن خدمات صهيب نت')}`,
+                '_blank'); }
+
+        // ============ لوحة الإدارة ============
+        function switchAdminView(sec) { ['store-log', 'users', 'packages-manage', 'guess', 'global-settings', 'custom-card',
+                'audit-log'
+            ].forEach(s => { const el = document.getElementById('admin-sec-' + s); if (el) el.style.display = s ===
+                    sec ? 'block' : 'none'; }); if (sec === 'store-log') renderAdminGlobalLog(); if (sec === 'users')
+                filterAdminUsers(); if (sec === 'guess') generateAction(); if (sec === 'packages-manage')
+                renderAdminPackagesManagement(); if (sec === 'global-settings') renderGlobalSettings(); if (sec ===
+                'custom-card') renderCustomCardSection(); if (sec === 'audit-log') renderAuditLog(); }
+
+        function buildAdminPanel() { document.getElementById('stat-users').innerText = db.users.length;
+            document.getElementById('stat-cards').innerText = db.cards.length;
+            document.getElementById('stat-total-money').innerText = db.users.reduce((s, u) => s + u.balance, 0).toFixed(
+                2) + ' ₪'; const sc = document.getElementById('admin-available-stock-summary'); if (sc) sc.innerHTML = db
+                .packages.map(p => { const cnt = db.cards.filter(c => c.pkgTitle === p.title && c.status === 'متاح')
+                    .length; return `
+            <div class="item" style="border-right:4px solid ${p.color};padding:10px;"><strong>${p.title}</strong><span class="badge" style="background:${cnt>0?'#ecfdf5':'#fef2f2'};color:${cnt>0?'#10b981':'#e63946'};">المخزن: ${cnt}</span></div>`; })
+                .join('');
+            filterAdminUsers();
+            renderAdminGlobalLog();
+            updateLastBackupDisplay(); }
+
+        function renderAdminGlobalLog() { const c = document.getElementById('admin-global-log-container'); if (!c) return;
+            c.innerHTML = db.transactions.length === 0 ?
+                '<p style="text-align:center;color:#94a3b8;">لا توجد عمليات</p>' : [...db.transactions].reverse().map(t =>
+                    `<div class="tx-item" style="border-right:4px solid ${t.amount<0?'#e63946':'#2ecc71'};"><div><span class="tx-title">${t.title}</span><span class="tx-desc">${t.user} | ${t.desc}</span></div><div class="tx-amount ${t.amount<0?'tx-minus':'tx-plus'}">${t.amount<0?'':'+'}${t.amount.toFixed(2)} ₪</div></div>`
+                    ).join(''); }
+
+        function filterAdminUsers() { const q = document.getElementById('search-users-input')?.value.trim().toLowerCase() ||
+            ''; const list = document.getElementById('admin-users-list'); if (!list) return;
+            list.innerHTML = db.users.filter(u => u.name.toLowerCase().includes(q) || u.user.includes(q) || u.phone.includes(
+                q)).map(u => `
+            <div class="item" style="flex-wrap:wrap;"><div style="flex:1;"><strong>${u.name} (${u.user})</strong><span style="display:block;font-size:11px;">📞 ${u.phone}</span><span style="display:block;font-size:11px;color:#4f46e5;">💰 ${u.balance.toFixed(2)} ₪</span></div><div style="display:flex;gap:4px;flex-direction:column;width:100px;"><button class="btn-xs bg-blue-600" onclick="editUserDataAdmin('${u.user}')">تعديل</button><button class="btn-xs bg-emerald-600" onclick="modifyUserBalanceAdmin('${u.user}','charge')">شحن</button><button class="btn-xs bg-rose-600" onclick="modifyUserBalanceAdmin('${u.user}','deduct')">خصم</button></div></div>`).join(
+                ''); }
+
+        function editUserDataAdmin(un) { const u = db.users.find(x => x.user === un); if (!u) return;
+            Swal.fire({ title: 'تعديل بيانات',
+                html: `<input id="en" class="swal2-input" value="${u.name}" placeholder="الاسم"><input id="ep" class="swal2-input" value="${u.phone}" placeholder="الهاتف"><input id="epa" class="swal2-input" placeholder="كلمة مرور جديدة">`,
+                showCancelButton: true, confirmButtonText: 'حفظ', preConfirm: () => { const n = document.getElementById(
+                        'en').value.trim(), p = document.getElementById('ep').value.trim(), pa = document
+                    .getElementById('epa').value.trim(); if (!n || !p) { Swal.showValidationMessage(
+                        'الاسم والهاتف إلزاميان'); return false; } return { n, p, pa }; } }).then(r => { if (r
+                    .isConfirmed) { u.name = r.value.n;
+                u.phone = r.value.p; if (r.value.pa) u.pass = hashPassword(r.value.pa);
+                addAuditLog('تعديل مستخدم', `المستخدم: ${u.user}`, db.storeSession?.user);
+                saveDB();
+                buildAdminPanel();
+                Swal.fire('تم', 'تم تحديث البيانات', 'success'); } }); }
+
+        function modifyUserBalanceAdmin(un, type) { const u = db.users.find(x => x.user === un); if (!u) return;
+            Swal.fire({ title: type === 'charge' ? '💰 شحن رصيد' : '💸 خصم رصيد', input: 'number',
+                inputPlaceholder: 'المبلغ', showCancelButton: true, confirmButtonText: 'تأكيد',
+                inputValidator: v => !v || v <= 0 ? 'قيمة غير صحيحة' : null }).then(r => { if (r.isConfirmed) { const
+                    amt = +r.value;
+                u.balance = +(u.balance + (type === 'charge' ? amt : -amt)).toFixed(2);
+                db.transactions.push({ id: Date.now(), user: u.name, type: 'system',
+                    title: type === 'charge' ? 'شحن إداري' : 'خصم إداري', desc: 'بواسطة المشرف',
+                    amount: type === 'charge' ? amt : -amt, date: new Date().toISOString().split('T')[0] });
+                addAuditLog(type === 'charge' ? 'شحن رصيد' : 'خصم رصيد',
+                    `المستخدم: ${u.user} | مبلغ: ${amt}`, db.storeSession?.user);
+                saveDB();
+                buildAdminPanel();
+                Swal.fire('تم', 'تم تحديث الرصيد', 'success'); } }); }
+
+        function renderAdminPackagesManagement() { const list = document.getElementById('admin-packages-manage-list'); if (
+                !list) return;
+            list.innerHTML = db.packages.map(p => `
+            <div class="item" style="border-left:4px solid ${p.color};padding:12px;"><div style="flex:1;"><strong><i class="fa-solid ${p.icon}" style="color:${p.color};"></i> ${p.title}</strong><span style="display:block;font-size:11px;">${p.desc}</span><span style="color:${p.color};">${p.price} ₪ | ${p.defaultExpiryHours||24}س ${p.defaultExpiryMinutes||0}د</span></div><div style="display:flex;gap:4px;flex-direction:column;width:75px;"><button class="btn-xs bg-amber-500" onclick="openEditPackageModal(${p.id})">تعديل</button><button class="btn-xs bg-red-600" onclick="deletePackageAdmin(${p.id})">حذف</button></div></div>`)
+                .join(''); }
+
+        function openAddPackageModal() { Swal.fire({ title: '➕ باقة جديدة',
+            html: `<input id="pt" class="swal2-input" placeholder="اسم الباقة"><input id="pp" type="number" class="swal2-input" placeholder="السعر"><input id="pd" class="swal2-input" placeholder="الوصف"><input id="peh" type="number" class="swal2-input" value="24" placeholder="ساعات"><input id="pem" type="number" class="swal2-input" value="0" placeholder="دقائق"><select id="pco" class="swal2-input"><option value="#10b981">أخضر</option><option value="#f97316">برتقالي</option><option value="#a855f7">بنفسجي</option><option value="#3b82f6">أزرق</option></select><select id="pic" class="swal2-input"><option value="fa-clock">ساعة</option><option value="fa-bolt">برق</option><option value="fa-star">نجمة</option><option value="fa-calendar-days">تقويم</option></select>`,
+            showCancelButton: true, confirmButtonText: 'إضافة', preConfirm: () => { const t = document.getElementById(
+                    'pt').value.trim(), pr = +document.getElementById('pp').value, d = document.getElementById('pd')
+                .value.trim(); if (!t || !pr || !d) { Swal.showValidationMessage('املأ جميع الحقول'); return false; }
+                return { title: t, price: pr, desc: d, color: document.getElementById('pco').value,
+                    icon: document.getElementById('pic').value, defaultExpiryHours: +document.getElementById(
+                        'peh').value || 24, defaultExpiryMinutes: +document.getElementById('pem').value || 0 }; } })
+            .then(r => { if (r.isConfirmed) { db.packages.push({ id: Date.now(), ...r.value });
+                    addAuditLog('إضافة باقة', `الباقة: ${r.value.title}`, db.storeSession?.user);
+                    saveDB();
+                    buildAdminPanel();
+                    renderAdminPackagesManagement();
+                    Swal.fire('تم', 'تمت الإضافة', 'success'); } }); }
+
+        function openEditPackageModal(id) { const p = db.packages.find(x => x.id === id); if (!p) return;
+            Swal.fire({ title: 'تعديل الباقة',
+                html: `<input id="ept" class="swal2-input" value="${p.title}"><input id="epp" type="number" class="swal2-input" value="${p.price}"><input id="epd" class="swal2-input" value="${p.desc}"><input id="epeh" type="number" class="swal2-input" value="${p.defaultExpiryHours||24}"><input id="epem" type="number" class="swal2-input" value="${p.defaultExpiryMinutes||0}"><select id="epco" class="swal2-input">${['#10b981','#f97316','#a855f7','#3b82f6'].map(c=>`<option value="${c}" ${p.color===c?'selected':''}>${c}</option>`).join('')}</select>`,
+                showCancelButton: true, confirmButtonText: 'حفظ', preConfirm: () => { const t = document.getElementById(
+                        'ept').value.trim(), pr = +document.getElementById('epp').value, d = document.getElementById(
+                        'epd').value.trim(); if (!t || !pr || !d) { Swal.showValidationMessage('املأ جميع الحقول'); return false; }
+                    return { title: t, price: pr, desc: d, color: document.getElementById('epco').value,
+                        defaultExpiryHours: +document.getElementById('epeh').value || 24,
+                        defaultExpiryMinutes: +document.getElementById('epem').value || 0 }; } }).then(r => { if (r
+                    .isConfirmed) { Object.assign(p, r.value);
+                    addAuditLog('تعديل باقة', `الباقة: ${r.value.title}`, db.storeSession?.user);
+                    saveDB();
+                    buildAdminPanel();
+                    renderAdminPackagesManagement();
+                    Swal.fire('تم', 'تم التحديث', 'success'); } }); }
+
+        function deletePackageAdmin(id) { Swal.fire({ title: '⚠️ تأكيد الحذف', text: 'سيتم حذف الباقة نهائياً.',
+                icon: 'warning', showCancelButton: true, confirmButtonColor: '#e63946', confirmButtonText: 'احذف',
+                cancelButtonText: 'تراجع' }).then(r => { if (r.isConfirmed) { const pkg = db.packages.find(p => p.id ===
+                        id);
+                    db.packages = db.packages.filter(p => p.id !== id);
+                    addAuditLog('حذف باقة', `الباقة: ${pkg?.title||id}`, db.storeSession?.user);
+                    saveDB();
+                    buildAdminPanel();
+                    renderAdminPackagesManagement();
+                    Swal.fire('تم', 'تم حذف الباقة', 'success'); } }); }
+
+        function renderCustomCardSection() { document.getElementById('custom-card-user').value = '';
+            document.getElementById('custom-card-pass').value = '';
+            document.getElementById('custom-card-hours').value = 0;
+            document.getElementById('custom-card-minutes').value = 5;
+            document.getElementById('custom-card-serial').value = '';
+            renderRecentCustomCards(); }
+
+        function createCustomCard() { const u = document.getElementById('custom-card-user').value.trim(); const p = document
+                .getElementById('custom-card-pass').value.trim(); const h = parseInt(document.getElementById(
+                    'custom-card-hours').value) || 0; const m = parseInt(document.getElementById('custom-card-minutes')
+                .value) || 0; let s = document.getElementById('custom-card-serial').value.trim(); if (!u || !p) { Swal.fire(
+                    'تنبيه', 'أدخل اسم المستخدم وكلمة المرور', 'warning'); return; } if (h === 0 && m === 0) { Swal.fire(
+                    'تنبيه', 'حدد مدة صلاحية', 'warning'); return; } if (db.cards.some(c => c.user === u && c.pass === p))
+             { Swal.fire('تنبيه', 'البطاقة موجودة مسبقاً', 'warning'); return; } if (!s) s = 'SN-' + Math.floor(100000 + Math
+                .random() * 900000); const vt = `${h>0?h+' ساعة ':''}${m>0?m+' دقيقة':''}`.trim();
+            db.cards.unshift({ user: u, pass: p, pkgTitle: 'بطاقة مخصصة', status: 'متاح', owner: 'admin', serial: s,
+                valid: vt || 'مخصصة', price: '0', activatedAt: null, expiryHours: h, expiryMinutes: m,
+                customCreated: true, createdAt: new Date().toISOString() });
+            addAuditLog('إنشاء بطاقة مخصصة', `يوزر: ${u}`, db.storeSession?.user);
+            saveDB();
+            buildAdminPanel();
+            renderRecentCustomCards();
+            Swal.fire({ title: '✅ تم الإنشاء', html: `اليوزر: <b>${u}</b><br>المرور: <b>${p}</b><br>المدة: <b>${vt}</b>`,
+                icon: 'success' }); }
+
+        function renderRecentCustomCards() { const list = document.getElementById('custom-cards-recent-list'); if (!list)
+            return; const cards = db.cards.filter(c => c.customCreated).slice(0, 10);
+            list.innerHTML = cards.length === 0 ?
+                '<p style="text-align:center;color:var(--muted);">لا توجد بطاقات مخصصة</p>' : cards.map(c =>
+                    `<div class="item" style="border-right:4px solid #6366f1;padding:12px;"><div><strong>${c.user}</strong> | مرور: ${c.pass}<br><span style="font-size:10px;">المدة: ${c.valid} | ${c.serial}</span></div><span class="badge" style="background:#e0e7ff;color:#4338ca;">${c.status}</span></div>`
+                    ).join(''); }
+
+        function renderAuditLog() { const c = document.getElementById('audit-log-container'); if (!c) return; const logs = (db
+                .auditLogs || []).slice(0, 100);
+            c.innerHTML = logs.length === 0 ? '<p style="text-align:center;color:var(--muted);">لا توجد سجلات</p>' : logs.map(
+                l =>
+                `<div class="tx-item" style="border-right:4px solid #6366f1;font-size:12px;"><div><strong>${l.action}</strong><span style="display:block;font-size:10px;">${l.details}</span><span style="font-size:9px;color:#94a3b8;">${new Date(l.timestamp).toLocaleString('ar-SA')}</span></div><span class="badge" style="background:#e0e7ff;color:#4338ca;">${l.user}</span></div>`
+                ).join(''); }
+
+        function exportFullData() { downloadBackup();
+            addAuditLog('تصدير كامل', '', db.storeSession?.user);
+            saveDB(false); }
+
+        function importFullDataPrompt() { Swal.fire({ title: '⚠️ استيراد البيانات',
+            html: '<p style="color:#e63946;">سيؤدي الاستيراد لاستبدال جميع البيانات!</p><input type="file" id="import-file-input" accept=".json" class="swal2-input">',
+            showCancelButton: true, confirmButtonText: 'استيراد', cancelButtonText: 'إلغاء',
+            confirmButtonColor: '#e63946', preConfirm: () => { const file = document.getElementById(
+                    'import-file-input').files[0]; if (!file) { Swal.showValidationMessage('اختر ملفاً'); return false; }
+                return new Promise((resolve, reject) => { const r = new FileReader();
+                    r.onload = (e) => { try { const d = JSON.parse(e.target.result); if (!d.users || !d
+                            .cards) { reject('ملف غير صالح'); return; }
+                        resolve(d); } catch (err) { reject('تعذر قراءة الملف'); } };
+                    r.onerror = () => reject('خطأ');
+                    r.readAsText(file); }); } }).then(r => { if (r.isConfirmed && r.value) { Swal.fire({ title: 'تأكيد نهائي',
+                        text: 'هل أنت متأكد؟', icon: 'warning', showCancelButton: true,
+                        confirmButtonColor: '#e63946', confirmButtonText: 'استبدل',
+                    cancelButtonText: 'تراجع' }).then(r2 => { if (r2.isConfirmed) { db = r.value; if (!db
+                                .auditLogs) db.auditLogs = []; if (!db.customBackgrounds) db
+                            .customBackgrounds = { hotspot: '', store: '' };
+                        addAuditLog('استيراد كامل', 'تم استبدال البيانات', db.storeSession?.user);
+                        db.storeSession = null;
+                        saveDB();
+                        applyCustomBackgrounds();
+                        Swal.fire('تم', 'تم الاستيراد. سيتم إعادة التحميل.', 'success').then(() => location
+                            .reload()); } }); } }); }
+
+        function renderGlobalSettings() { const gs = db.globalSettings; const c = document.getElementById(
+                'global-settings-container'); if (!c) return;
+            c.innerHTML = `
+        <div class="security-box"><h4>🌐 صفحة الهوت سبوت</h4><div class="input-gp"><label>العنوان الرئيسي</label><input type="text" id="gs-ht" value="${gs.hotspotTitle}"></div><div class="input-gp"><label>العنوان الفرعي</label><input type="text" id="gs-hs" value="${gs.hotspotSubtitle}"></div><div class="input-gp"><label>رقم واتساب</label><input type="text" id="gs-cp" value="${gs.contactPhone}"></div></div><div class="security-box"><h4>🛒 المتجر</h4><div class="input-gp"><label>نص التذييل</label><input type="text" id="gs-ft" value="${gs.footerText}"></div><div class="input-gp"><label>اسم المالك</label><input type="text" id="gs-on" value="${gs.ownerName}"></div><div class="input-gp"><label>تأخير التوجيه (مللي)</label><input type="number" id="gs-ar" value="${gs.autoRedirectDelay}"></div><div class="input-gp"><label>تأخير الحالة</label><input type="number" id="gs-sd" value="${gs.statusPageDelay}"></div><div class="input-gp"><label>مهلة الجلسة (دقائق)</label><input type="number" id="gs-st" value="${gs.sessionTimeout||30}"></div></div><button class="btn btn-success" onclick="saveGlobalSettings()"><i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات</button>`; }
+
+        function saveGlobalSettings() { db.globalSettings = { hotspotTitle: document.getElementById('gs-ht').value.trim() ||
+                'Sohaib Net', hotspotSubtitle: document.getElementById('gs-hs').value.trim() || 'شبكة Sohaib Net',
+                contactPhone: document.getElementById('gs-cp').value.trim() || '+970599038268',
+                footerText: document.getElementById('gs-ft').value.trim() || 'النظام متخصص لبيع بطاقات Sohaib Net',
+                ownerName: document.getElementById('gs-on').value.trim() || 'م.صهيب قديح',
+                autoRedirectDelay: +document.getElementById('gs-ar').value || 4000,
+                statusPageDelay: +document.getElementById('gs-sd').value || 2000,
+                sessionTimeout: +document.getElementById('gs-st').value || 30 };
+            addAuditLog('تحديث الإعدادات', '', db.storeSession?.user);
+            saveDB();
+            applyGlobalSettings();
+            resetSessionTimer();
+            Swal.fire('تم', 'تم حفظ الإعدادات', 'success'); }
+
+        // ============ لوحة التحكم الرئيسية ============
+        function masterAction(action) { switch (action) { case 'backup':
+                downloadBackup(); break; case 'restore':
+                Swal.fire({ title: 'استعادة نسخة',
+                    html: '<input type="file" id="restore-file" accept=".json" class="swal2-input">',
+                    showCancelButton: true, confirmButtonText: 'استعادة', preConfirm: () => { const f = document
+                            .getElementById('restore-file').files[0]; if (!f) { Swal.showValidationMessage(
+                                'اختر ملفاً'); return false; } return new Promise((resolve, reject) => { const r =
+                                new FileReader();
+                            r.onload = (e) => { try { const d = JSON.parse(e.target.result); if (!d.users || !
+                                    d.cards) { reject('ملف غير صالح'); return; }
+                                resolve(d); } catch (er) { reject('خطأ'); } };
+                            r.onerror = () => reject('خطأ');
+                            r.readAsText(f); }); } }).then(r => { if (r.isConfirmed && r.value) { db = r.value; if (!
+                            db.auditLogs) db.auditLogs = []; if (!db.customBackgrounds) db.customBackgrounds = {
+                            hotspot: '', store: '' };
+                    db.storeSession = null;
+                    saveDB();
+                    applyCustomBackgrounds();
+                    location.reload(); } }); break; case 'resetAll':
+                Swal.fire({ title: '⚠️ تصفير كامل', text: 'سيتم حذف جميع البيانات نهائياً!', icon: 'warning',
+                    showCancelButton: true, confirmButtonColor: '#dc2626', confirmButtonText: 'تصفير',
+                cancelButtonText: 'تراجع' }).then(r => { if (r.isConfirmed) { localStorage.clear();
+                        location.reload(); } }); break; case 'repairDB':
+                db.cards.forEach(c => { c.expiryHours = c.expiryHours || 0;
+                    c.expiryMinutes = c.expiryMinutes || 0;
+                    c.activatedAt = c.activatedAt || null;
+                    c.customCreated = c.customCreated || false; }); if (!db.customBackgrounds) db.customBackgrounds = {
+                    hotspot: '', store: '' }; if (!db.auditLogs) db.auditLogs = [];
+                saveDB();
+                Swal.fire('تم', 'تم إصلاح البيانات', 'success'); break; case 'clearLogs':
+                Swal.fire({ title: 'مسح السجلات', text: 'مسح سجل العمليات والتدقيق؟', showCancelButton: true,
+                    confirmButtonColor: '#dc2626', confirmButtonText: 'مسح' }).then(r => { if (r.isConfirmed) { db
+                        .transactions = [];
+                    db.auditLogs = [];
+                    saveDB();
+                    buildAdminPanel();
+                    Swal.fire('تم', 'تم مسح السجلات', 'success'); } }); break; case 'refreshAll':
+                saveDB();
+                buildAdminPanel();
+                generateAction();
+                applyCustomBackgrounds();
+                Swal.fire('تم', 'تم التحديث الكامل', 'success'); break; case 'toggleAdmin':
+                Swal.fire({ title: '👑 صلاحيات المدير', input: 'text', inputPlaceholder: 'اسم المستخدم لجعله مديراً',
+                    showCancelButton: true, confirmButtonText: 'تطبيق',
+                    inputValidator: v => !v ? 'أدخل اسم المستخدم' : null }).then(r => { if (r.isConfirmed) { const u =
+                        db.users.find(x => x.user === r.value.trim().toLowerCase()); if (!u) { Swal.fire('خطأ',
+                            'المستخدم غير موجود', 'error'); return; }
+                    u.role = u.role === 'admin' ? 'user' : 'admin';
+                    addAuditLog('تغيير صلاحية', `المستخدم: ${u.user} | الدور: ${u.role}`, db.storeSession?.user);
+                    saveDB();
+                    Swal.fire('تم', `تم تغيير دور ${u.name} إلى ${u.role}`, 'success'); } }); break; } }
+
+        // ============ إعدادات الخلفيات مع رفع الصور من الهاتف ============
+        function openBackgroundSettings() {
+            const currentHotspot = db.customBackgrounds?.hotspot || '';
+            const currentStore = db.customBackgrounds?.store || '';
+            const isHotspotDataUrl = currentHotspot.startsWith('data:');
+            const isStoreDataUrl = currentStore.startsWith('data:');
+
+            Swal.fire({
+                title: '🖼️ إعدادات الخلفيات',
+                html: `
+            <p style="text-align:right;font-weight:700;margin-bottom:6px;">📶 خلفية صفحة الهوت سبوت:</p>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px;">
+              <input id="bg-hotspot-url" class="swal2-input" value="${isHotspotDataUrl?'':currentHotspot}" placeholder="رابط الصورة (https://...)" style="direction:ltr;flex:1;min-width:150px;">
+              <label class="bg-upload-btn" for="bg-hotspot-file" style="margin:0;white-space:nowrap;"><i class="fa-solid fa-mobile-screen"></i> من الهاتف</label>
+              <input type="file" id="bg-hotspot-file" accept="image/*" style="display:none;" onchange="handleBgFileSelect(this,'hotspot')">
+            </div>
+            ${currentHotspot?`<img id="bg-preview-hotspot" class="bg-preview-mini" src="${currentHotspot}" style="display:block;">`:''}
+            <p style="text-align:right;font-weight:700;margin-top:14px;margin-bottom:6px;">🛒 خلفية صفحة المتجر:</p>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px;">
+              <input id="bg-store-url" class="swal2-input" value="${isStoreDataUrl?'':currentStore}" placeholder="رابط الصورة (https://...)" style="direction:ltr;flex:1;min-width:150px;">
+              <label class="bg-upload-btn" for="bg-store-file" style="margin:0;white-space:nowrap;"><i class="fa-solid fa-mobile-screen"></i> من الهاتف</label>
+              <input type="file" id="bg-store-file" accept="image/*" style="display:none;" onchange="handleBgFileSelect(this,'store')">
+            </div>
+            ${currentStore?`<img id="bg-preview-store" class="bg-preview-mini" src="${currentStore}" style="display:block;">`:''}
+            <p style="font-size:10px;color:#94a3b8;margin-top:8px;">اختر صورة من هاتفك أو ضع رابط. لاستخدام الصورة الافتراضية اتركه فارغاً.</p>
+          `,
+                showCancelButton: true,
+                confirmButtonText: '💾 حفظ',
+                confirmButtonColor: '#8b5cf6',
+                didOpen: () => {
+                    // تخزين مؤقت للصور المرفوعة
+                    if (!window._bgUploadCache) window._bgUploadCache = {};
+                    window._bgUploadCache.hotspot = currentHotspot;
+                    window._bgUploadCache.store = currentStore;
+                },
+                preConfirm: () => {
+                    const hotspotUrl = document.getElementById('bg-hotspot-url').value.trim();
+                    const storeUrl = document.getElementById('bg-store-url').value.trim();
+                    const hotspotFinal = window._bgUploadCache?.hotspot || hotspotUrl;
+                    const storeFinal = window._bgUploadCache?.store || storeUrl;
+                    return { hotspot: hotspotFinal, store: storeFinal };
+                }
+            }).then(r => {
+                if (r.isConfirmed) {
+                    if (!db.customBackgrounds) db.customBackgrounds = { hotspot: '', store: '' };
+                    db.customBackgrounds.hotspot = r.value.hotspot;
+                    db.customBackgrounds.store = r.value.store;
+                    saveDB();
+                    applyCustomBackgrounds();
+                    Swal.fire('تم', 'تم تحديث الخلفيات بنجاح', 'success');
+                }
+            });
+        }
+
+        function handleBgFileSelect(input, type) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    if (!window._bgUploadCache) window._bgUploadCache = {};
+                    window._bgUploadCache[type] = dataUrl;
+                    // تحديث المعاينة
+                    const previewEl = document.getElementById('bg-preview-' + type);
+                    if (previewEl) {
+                        previewEl.src = dataUrl;
+                        previewEl.style.display = 'block';
+                    } else {
+                        // إنشاء عنصر معاينة جديد
+                        const urlInput = document.getElementById('bg-' + type + '-url');
+                        if (urlInput && urlInput.parentNode) {
+                            const img = document.createElement('img');
+                            img.id = 'bg-preview-' + type;
+                            img.className = 'bg-preview-mini';
+                            img.src = dataUrl;
+                            img.style.display = 'block';
+                            urlInput.parentNode.appendChild(img);
+                        }
+                    }
+                    // مسح حقل الرابط
+                    const urlInput = document.getElementById('bg-' + type + '-url');
+                    if (urlInput) urlInput.value = '';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function downloadBackup() {
+            const dataStr = JSON.stringify(db, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sohaib_net_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            Swal.fire({ title: '✅ تم التصدير', timer: 1500, showConfirmButton: false, toast: true, position: 'bottom' });
+        }
+
+        // ============ المطبعة المحسنة ============
+        let globalCardsArray = [];
+        const theme = { bg1: '#0f172a', bg2: '#1e1b4b', text: '#fbbf24', border: '#fbbf24' };
+
+        function getOptimalGrid(n, cardW, cardH) { if (n <= 1) return { cols: 1, rows: 1 }; const availW = 210 - 16,
+                availH = 297 - 16; const maxCols = Math.floor(availW / (cardW + 3)),
+                maxRows = Math.floor(availH / (cardH + 3)); let bestCols = Math.min(Math.round(Math.sqrt(n * (availW /
+                    availH))), maxCols, 10); if (bestCols < 1) bestCols = 1; let bestRows = Math.min(Math.ceil(n /
+                    bestCols), maxRows, 10); if (bestRows < 1) bestRows = 1; while (bestCols * bestRows < n && bestCols <
+                    maxCols) bestCols++; while (bestCols * bestRows < n && bestRows < maxRows) bestRows++; return { cols: Math
+                    .min(bestCols, maxCols), rows: Math.min(bestRows, maxRows) }; }
+
+        function generateAction() { const count = +document.getElementById('cardCount').value || 1; const cardsPerPage = Math
+                .min(+document.getElementById('cardsPerPageInput').value || 20, 100); const cardW = +document.getElementById(
+                    'cardWidthMM').value || 48; const cardH = +document.getElementById('cardHeightMM').value || 48; const
+                wrapper = document.getElementById('finalPrintWrapper'); if (!wrapper) return;
+            wrapper.innerHTML = '';
+            globalCardsArray = [];
+            document.getElementById('statCount').innerText = count;
+            document.getElementById('statMoney').innerText = (count * (+document.getElementById('cardPrice').value || 0)) +
+                ' شيكل'; const netName = document.getElementById('netName').value; const netIcon = document.getElementById(
+                    'netIcon').value; const cardPrice = document.getElementById('cardPrice').value; const cardValid = document
+                .getElementById('cardValid').value; const cardExpiryHours = +document.getElementById('cardExpiryHours')
+                .value || 24; const cardExpiryMinutes = +document.getElementById('cardExpiryMinutes').value || 0; const
+                cardTag = document.getElementById('cardTag').value; let pageDiv = null,
+                cardsInPage = 0; for (let i = 0; i < count; i++) { const u = Math.floor(100000 + Math.random() * 900000)
+                    .toString(); const p = Math.floor(100 + Math.random() * 900).toString(); const s = 'SN-' + Math.floor(
+                        100000 + Math.random() * 900000);
+                globalCardsArray.push({ user: u, pass: p, serial: s, price: cardPrice, valid: cardValid,
+                    expiryHours: cardExpiryHours, expiryMinutes: cardExpiryMinutes, tag: cardTag }); if (
+                    cardsInPage === 0) { pageDiv = document.createElement('div');
+                    pageDiv.className = 'pdf-page'; const remaining = count - i; const thisPageCount = Math.min(
+                        cardsPerPage, remaining); const g = getOptimalGrid(thisPageCount, cardW, cardH);
+                    pageDiv.style.gridTemplateColumns = `repeat(${g.cols}, ${cardW}mm)`;
+                    pageDiv.style.gridAutoRows = `${cardH}mm`;
+                    pageDiv.style.justifyContent = 'center';
+                    pageDiv.style.alignContent = 'start';
+                    pageDiv.style.gap = '2mm';
+                    pageDiv.style.backgroundColor = '#ffffff';
+                    wrapper.appendChild(pageDiv); } const card = document.createElement('div');
+                card.className = 'printable-card security-bg';
+                card.style.background = `linear-gradient(135deg, ${theme.bg1}, ${theme.bg2})`;
+                card.style.color = theme.text;
+                card.style.borderColor = theme.border;
+                card.style.width = cardW + 'mm';
+                card.style.height = cardH + 'mm';
+                card.style.borderRadius = '4mm';
+                card.style.padding = '2mm';
+                card.style.border = '1px solid ' + theme.border;
+                card.style.fontSize = (cardW < 35 ? '6px' : cardW < 45 ? '7px' : '9px');
+                card.innerHTML = `
+            <div style="text-align:center;border-bottom:1px solid ${theme.border}35;padding-bottom:1mm;">
+              <h4 style="color:#fbbf24;display:flex;align-items:center;justify-content:center;gap:2px;font-size:inherit;margin:0;">${netIcon} ${netName}</h4>
+              <span style="font-size:${cardW<35?'5px':'7px'};color:#fbbf24;">${cardTag}</span>
+            </div>
+            <div style="padding:1mm 0;">
+              <div style="display:flex;justify-content:space-between;background:rgba(0,0,0,0.2);padding:1mm 2mm;border-radius:2mm;margin-bottom:1mm;"><span style="font-size:inherit;color:#fbbf24;">👤</span><span style="font-weight:bold;color:#fff;font-size:inherit;">${u}</span></div>
+              <div style="display:flex;justify-content:space-between;background:rgba(0,0,0,0.2);padding:1mm 2mm;border-radius:2mm;"><span style="font-size:inherit;color:#fbbf24;">🔑</span><span style="font-weight:bold;color:#fff;font-size:inherit;">${p}</span></div>
+            </div>
+            <div style="border-top:1px solid ${theme.border}35;padding-top:1mm;font-size:inherit;">
+              <div style="display:flex;justify-content:space-between;color:#fbbf24;"><span>${cardPrice} ₪</span><span>⏱️ ${cardValid}</span></div>
+              <div style="text-align:center;font-size:${cardW<35?'4px':'5px'};color:#fbbf24;opacity:0.5;border-top:1px dashed;margin-top:1mm;padding-top:1mm;">${s}</div>
+            </div>`;
+                pageDiv.appendChild(card);
+                cardsInPage++; if (cardsInPage >= cardsPerPage) cardsInPage = 0; } }
+
+        function saveCardsToAdminDB() { if (!globalCardsArray.length) { Swal.fire('تنبيه', 'لا توجد كروت للتخزين',
+            'warning'); return; }
+            globalCardsArray.forEach(c => { db.cards.unshift({ ...c, pkgTitle: c.tag, status: 'متاح', owner: 'admin',
+                    activatedAt: null, customCreated: false }); });
+            addAuditLog('اعتماد كروت', `العدد: ${globalCardsArray.length}`, db.storeSession?.user);
+            saveDB();
+            buildAdminPanel();
+            Swal.fire('تم', 'تم اعتماد الكروت في المخزن', 'success'); }
+
+        function saveAsPDF() { if (!globalCardsArray.length) { Swal.fire('تنبيه', 'قم بتوليد الكروت أولاً', 'warning'); return; }
+            const wrapper = document.getElementById('finalPrintWrapper');
+            wrapper.querySelectorAll('.pdf-page').forEach(p => { p.style.display = 'grid';
+                p.style.visibility = 'visible';
+                p.style.opacity = '1'; });
+            Swal.fire({ title: '📄 جاري التصدير', html: '<p>يتم إنشاء PDF...</p>', allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading();
+                    html2pdf().set({ margin: [1, 1, 1, 1], filename: `مطبعة_صهيب_نت_${Date.now()}.pdf`,
+                        image: { type: 'jpeg', quality: 1.0 }, html2canvas: { scale: 3, useCORS: true,
+                            backgroundColor: '#ffffff', logging: false }, jsPDF: { unit: 'mm',
+                            format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['avoid-all',
+                            'css', 'legacy'
+                        ] } }).from(wrapper).save().then(() => { Swal.fire('تم', 'تم حفظ PDF', 'success'); })
+                        .catch(() => { Swal.fire({ title: 'تنبيه',
+                            text: 'تعذر إنشاء PDF. جارِ فتح نافذة الطباعة.',
+                            icon: 'info' }).then(() => window.print()); }); } }); }
+
+        function saveViaPhoneSystem() { window.print(); }
+
+        // ============ التهيئة النهائية ============
+        applyCustomBackgrounds();
+        generateAction();
+    </script>
+</body>
+</html>
